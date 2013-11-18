@@ -5,7 +5,8 @@ import java.util.Date;
 import org.joda.time.*;
 
 
-class DaytimePeakPeriod {
+class DaytimePeakPeriod 
+{
 
     public boolean offPeak(DateTime time) 
     {
@@ -20,7 +21,7 @@ class DaytimePeakPeriod {
      * 
      * e.g. getNextHigherDelimiter(18 Nov, 18.51) will return 18 Nov, 19.00 
      */
-    public DateTime getNextHigherDelimiter(Date input)
+    protected static DateTime getNextHigherDelimiter(DateTime input)
     {
         DateTime dt = new DateTime(input);
         
@@ -39,7 +40,7 @@ class DaytimePeakPeriod {
         return dt;
     }
     
-    public DateTime getNextLowerDelimiter(Date input)
+    protected static DateTime getNextLowerDelimiter(DateTime input)
     {
         DateTime dt = new DateTime(input);
         
@@ -59,4 +60,18 @@ class DaytimePeakPeriod {
         }
         return dt;      
     }
+    
+
+   protected static int getDifferenceInSeconds(DateTime start, DateTime end)
+   {
+       Period diff = new Period(start, end);
+       return diff.getSeconds();
+   }
+  
+   protected static int getDifferenceInHours(DateTime start, DateTime end)
+   {
+       Period diff = new Period(start, end);
+       return diff.getHours();
+   }   
+    
 }
