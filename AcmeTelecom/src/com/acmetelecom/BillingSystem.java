@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
 
+// like a service
 public class BillingSystem {
 
     private List<CallEvent> callLog = new ArrayList<CallEvent>();

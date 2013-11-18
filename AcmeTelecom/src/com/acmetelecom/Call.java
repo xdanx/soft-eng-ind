@@ -11,10 +11,13 @@ import java.util.Date;
 public class Call {
     private CallEvent start;
     private CallEvent end;
+    
 
+    
     public Call(CallEvent start, CallEvent end) {
         this.start = start;
         this.end = end;
+        
     }
 
     public String callee() {
@@ -24,7 +27,8 @@ public class Call {
     public int durationSeconds() {
         return (int) (((end.time() - start.time()) / 1000));
     }
-
+    
+   
     public String date() {
         return SimpleDateFormat.getInstance().format(new Date(start.time()));
     }
@@ -36,4 +40,5 @@ public class Call {
     public Date endTime() {
         return new Date(end.time());
     }
+    
 }

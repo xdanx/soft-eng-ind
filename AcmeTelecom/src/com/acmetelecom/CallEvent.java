@@ -1,14 +1,21 @@
 package com.acmetelecom;
 
-public abstract class CallEvent {
+public class CallEvent {
     private String caller;
     private String callee;
     private long time;
+    private Stage stage;
+    
+    enum Stage {
+    	START,
+    	END
+    }
 
-    public CallEvent(String caller, String callee, long timeStamp) {
+    public CallEvent(String caller, String callee, long timeStamp, Stage stage) {
         this.caller = caller;
         this.callee = callee;
         this.time = timeStamp;
+        this.stage = stage;
     }
 
     public String getCaller() {
@@ -22,4 +29,8 @@ public abstract class CallEvent {
     public long time() {
         return time;
     }
+    public Stage getStage() {
+    	return stage;
+    }
+
 }
