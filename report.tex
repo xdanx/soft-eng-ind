@@ -1,0 +1,233 @@
+% !TEX TS-program = pdflatex
+% !TEX encoding = UTF-8 Unicode
+
+% This is a simple template for a LaTeX document using the "article" class.
+% See "book", "report", "letter" for other types of document.
+
+\documentclass[11pt,twocolumn]{article} % use larger type; default would be 10pt
+
+\usepackage[utf8]{inputenc} % set input encoding (not needed with XeLaTeX)
+
+%%% Examples of Article customizations
+% These packages are optional, depending whether you want the features they provide.
+% See the LaTeX Companion or other references for full information.
+
+%%% PAGE DIMENSIONS
+\usepackage{geometry} % to change the page dimensions
+\geometry{a4paper} % or letterpaper (US) or a5paper or....
+% \geometry{margin=2in} % for example, change the margins to 2 inches all round
+% \geometry{landscape} % set up the page for landscape
+%   read geometry.pdf for detailed page layout information
+
+\usepackage{graphicx} % support the \includegraphics command and options
+\usepackage{mathtools}
+\usepackage{amsmath} % need this stuff for curly brackets
+% \usepackage[parfill]{parskip} % Activate to begin paragraphs with an empty line rather than an indent
+
+%%% PACKAGES
+\usepackage{booktabs} % for much better looking tables
+\usepackage{array} % for better arrays (eg matrices) in maths
+\usepackage{paralist} % very flexible & customisable lists (eg. enumerate/itemize, etc.)
+\usepackage{verbatim} % adds environment for commenting out blocks of text & for better verbatim
+\usepackage{subfig} % make it possible to include more than one captioned figure/table in a single float
+% These packages are all incorporated in the memoir class to one degree or another...
+
+%%% HEADERS & FOOTERS
+\usepackage{fancyhdr} % This should be set AFTER setting up the page geometry
+\pagestyle{fancy} % options: empty , plain , fancy
+\renewcommand{\headrulewidth}{0pt} % customise the layout...
+\lhead{}\chead{}\rhead{}
+\lfoot{}\cfoot{\thepage}\rfoot{}
+
+%%% SECTION TITLE APPEARANCE
+\usepackage{sectsty}
+\allsectionsfont{\sffamily\mdseries\upshape} % (See the fntguide.pdf for font help)
+% (This matches ConTeXt defaults)
+
+%%% ToC (table of contents) APPEARANCE
+\usepackage[nottoc,notlof,notlot]{tocbibind} % Put the bibliography in the ToC
+\usepackage[titles,subfigure]{tocloft} % Alter the style of the Table of Contents
+\renewcommand{\cftsecfont}{\rmfamily\mdseries\upshape}
+\renewcommand{\cftsecpagefont}{\rmfamily\mdseries\upshape} % No bold!
+
+%%% END Article customizations
+
+%%% The "real" document content comes below...
+
+
+\title{Software Engineering For Industry \\ Coursework 2 - Report}
+\author{Dan Demeter, Dan Octavian, Razvan Rosie, Marius Telespan \\Imperial College London}
+
+
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Write this at the very end. It must respond to questions like:
+\begin{itemize}
+ \item {What - Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
+ when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.
+ It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.}
+ \item {When}
+ \item {How}
+ \item {Who}
+\end{itemize}
+
+Keywords:
+\end{abstract}
+
+\pagebreak
+
+\section{Introduction}
+Here comes the intro..
+
+\section{Acceptance Tests}
+As part of the Acceptance Test Driven Development / Behaviour Driven Development (ATDD/BDD) process, FitNesse was selected for writing user acceptance tests against Java software.
+This automated testing tool communicates both business logic specification, as well as the outcome of compliance with tests, to non-technical clients, via a fluent interface.
+
+\subsection{Regression Tests}
+Within the original specification, an example execution, via the main entry point in the Runner class, was provided together with the description, to illustrate a sample usage of the system.
+This basically involved registering a sequence of callInitiated and callCompleted events with a centralised BillingSystem, before generating a consolidated list of phone bills for its predefined list of customers.
+
+\subsection{Tests for new code}
+These documents were highly useful in assisting us during development of the codebase.
+A reference of new business logic specifications, in a form closest to natural language, was now available to the team for establishing, disambiguating, and consenting to a common understanding of the project plan.
+
+\section{Unit tests}
+Unit tests emphasise rigorous testing of individual components in isolation. The premise
+of this approach is that these tests should fail only when the design contract for the module
+is violated.
+This is most frequently employed in Test Driven Development (TDD) lifecycles, where
+the unit test suite the developer comes up with guides subsequent implementation of the
+program logic, until all these tests pass upon completion, thereby fulfilling the original
+design contract.
+
+Test code coverage was also provided for FairPeak24CostCalculator, an extension dealing
+with calls lasting for more than 24 hours at a time, by ensuring it performed correctly
+under circumstances of calls spanning beyond a single peak/off-peak boundary.
+In order to increase our test code coverage, measured using EMMA (Appendix A.2),
+Google?s CodePro AnalytiX Java developer tool was used to generate unit tests for the
+remaining classes, so that basic tests for language constructs were added, for example,
+validation of object initialisation within class constructor.
+
+
+
+\section{Extra features}
+
+\subsection{Fair Peak calculator}
+The FairPeakCalculator will only charge a customer for the call according to the prevailing
+rate at that time. A code snippet of the pseudocode can be found in Appendix B.2.
+The algorithm essentially performs a case-based analysis to reason about the cost com-
+putation. DaytimePeakPeriod provides all the typical derived information needed to it for
+this calculation. For example, it is able to figure out the next off-peak cutoff time from a
+given time for the Calculator.
+In addition, we took advantage of JodaTime to manage the complexity associated with
+date and time handling, especially the functionality for Duration. This simplifies the cost calculation to:
+
+\subsection{HTML Printer}
+There were several shortcomings in the original HtmlPrinter. It was creating non-W3C-
+compliant, malformed HTML, directing this to standard output, and not using any tem-
+plate engine, hence the presence of FreeMarker.
+In using FreeMarker, we were not only able to style the generated HTML content us-
+ing jQueryUI, to improve usability and the overall user experience in general, but at
+the same time, also maintain the original HTML output as a printout by declaring CSS
+
+
+\section{Code refactoring}
+
+\subsection{Handling the cyclic dependencies}
+This was caused by an inner LineItem class within BillingSystem. This was required by
+BillGenerator, as it was populating a data structure containing all phone calls made by
+customers.
+To solve this, LineItem was extracted out into the com.acmetelecom.util subpackage,
+thus removing this cyclic dependency, and at the same time, evolving the overall system
+towards a more reasonable structure.
+
+\subsection{Code refurbishment}
+The existing codebase was restructured to become increasingly modular. By applying con-
+cepts of dependency inversion and abstraction, we decoupled these classes into packages,
+each with a dedicated purpose.
+This brought about many benefits, such as encouraging code reuse and making testing
+convenient. Our team could now work simultaneously and asynchronously. Integration
+would be almost painless, due to a clear separation of concerns, introduced by interfaces.
+Ease of collaboration was also an added benefit.
+Full details of external dependencies as well as an architecture diagram, are available for reference.
+The project was managed using Maven, where external dependencies are specified as
+artifacts in pom.xml. The main application and test code are housed in distinct subfolders,
+yet test code is able to reference the Class Under Test (CUT). Test code is also composed
+as hierarchical TestSuites, to selectively test different segments of the codebase. Hardcoded
+constants belong in a properties file, in the respective resources folder.
+
+
+
+
+
+\section{Extra (hard) Work}
+
+\subsection{Source code validation}
+Another important aspect of software engineering is source code validation. Besides the
+aforementioned high level dependency analysis, it is probably worth using tools like Lint4J
+and CodePro AnalytiX to audit code, produce metrics, such as Afferent/Efferent Coup-
+lings, to measure code quality, and find similar/dead code to identify and remove redund-
+ancy, hence streamlining the codebase, in preparation for deployment to target environ-
+ment.
+
+\subsection{Testing}
+Testing was further augmented by importing techniques used in web applications for ex-
+ample, like the Selenium web browser automated testing tool, and JSoup to construct
+HTML parse trees, and navigate through them using combinations of familiar jQuery-like
+selectors, for better code coverage, and hence greater confidence in the final end product.
+
+\subsection{Documentation}
+On top of the builtin javadoc tool, the JAutodoc tool was used to generate Java documentation of typical classes like the model CustomerBill for completeness.
+Subsequently, additional configuration enabled styling of the resulting generated Javadocs
+
+\subsection{Calls Longer than 24 Hours}
+Calculating calls longer than 24 hours become simpler once the FairPeakCalculator was
+completed, because these calls are but just multiples of calls lasting a full day with some
+leftover. The cost for this remaining part of the call can be calculated using the original
+FairPeakCalculator, then added together for the final result, according to the expression:
+total peak seconds in a day * peak rate + total offpeak seconds in a day * offpeak rate
+
+\section{Software Engineering stuff}
+here comes some stuff
+
+\section{Conclusion}
+In conclusion, our prohect have demonstrated in this project how to go about engineering software
+with a long term vision, using proper procedures, with proven techniques and tools, which
+are still applicable as the software system scales as it matures over time.
+From the traditional tools for any project, such as a version control system like Git, bug
+or issue tracking system like Trac, and continuous integration service like TeamCity, to
+the extensive suite of testing tools for supporting through the various stages of testing,
+namely, Acceptance, Unit, Integration, System, and Regression, there is evidently more
+that can still be done to improve this software, given sufficient resources.
+
+For example, the code obsfucation and optimisation Java tool, ProGuard, can also be used
+during live deployment, to increase the code efficiency. If resources permit, we might have
+also explored other alternatives for mocking up Java objects, like jMock, EasyMock or
+Mockito frameworks, as well as other acceptance testing frameworks like JBehave.
+Or even further optimise our code by profiling using VisualVM, and substituting commonly
+used functions for those found in the Apache Commons project, or the Google Guava
+libraries, which are far more widely used or tested, thus more reliable. There could also be
+the possibility to attempt dependency injection using Google Guice, to improve testability
+of, and simplify deployment across different production environments.
+
+\pagebreak
+
+
+\begin{thebibliography}{9}
+
+\bibitem{lamport94}
+  Leslie Lamport,
+  \emph{\LaTeX: A Document Preparation System}.
+  Addison Wesley, Massachusetts,
+  2nd Edition,
+  1994.
+
+\end{thebibliography}
+
+
+
+
+\end{document}          
