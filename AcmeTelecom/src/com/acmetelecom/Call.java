@@ -7,6 +7,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import org.joda.time.*;
 
 public class Call {
     private CallEvent start;
@@ -29,11 +30,11 @@ public class Call {
         return SimpleDateFormat.getInstance().format(new Date(start.time()));
     }
 
-    public Date startTime() {
-        return new Date(start.time());
+    public DateTime startTime() {
+        return new DateTime(start.time());
     }
 
-    public Date endTime() {
-        return new Date(end.time());
+    public DateTime endTime() {
+        return new DateTime(end.time());
     }
 }
