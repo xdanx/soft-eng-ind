@@ -1,17 +1,16 @@
-package com.acmetelecom;
+package com.acmetelecom.utils;
 
 import java.util.Calendar;
 import java.util.Date;
 import org.joda.time.*;
 
 
-class DaytimePeakPeriod 
+public class DaytimePeakPeriod 
 {
 
     public boolean offPeak(DateTime time) 
     {
-        int hour = time.getHourOfDay();
-        return hour < 7 || hour >= 19;
+        return (time.getHourOfDay() < 7 || time.getHourOfDay() >= 19);
     }
     
     
@@ -21,7 +20,7 @@ class DaytimePeakPeriod
      * 
      * e.g. getNextHigherDelimiter(18 Nov, 18.51) will return 18 Nov, 19.00 
      */
-    protected static DateTime getNextHigherDelimiter(DateTime dt)
+    public static DateTime getNextHigherDelimiter(DateTime dt)
     {
     	DateTime answer;
         if(dt.getHourOfDay() >= 7  && dt.getHourOfDay() < 19)
@@ -43,12 +42,14 @@ class DaytimePeakPeriod
         return answer;
     }
     
-    protected static DateTime getNextLowerDelimiter(DateTime dt)
+    public static DateTime getNextLowerDelimiter(DateTime dt)
     {       
     	DateTime answer;
 
         if(dt.getHourOfDay() >= 7  && dt.getHourOfDay() < 19)
-        	answer = dt.withHourOfDay(7).withMinuteOfHour(0).withSecondOfMinute(0);
+        {
+            answer = dt.withHourOfDay(7).withMinuteOfHour(0).withSecondOfMinute(0);
+        }
         else 
         {
             if(dt.getHourOfDay() < 7)
@@ -73,7 +74,7 @@ class DaytimePeakPeriod
     * 
     * 
     */
-   protected static int getDifferenceInSeconds(DateTime start, DateTime end)
+   public static int getDifferenceInSeconds(DateTime start, DateTime end)
    {
        Period diff = new Period(start, end);
        return diff.toStandardSeconds().getSeconds();
@@ -83,7 +84,7 @@ class DaytimePeakPeriod
     * ALERT: it might as well thorw some errors as above Seconds immutable Class
     * 
     */
-   protected static int getDifferenceInHours(DateTime start, DateTime end)
+   public static int getDifferenceInHours(DateTime start, DateTime end)
    {
        Period diff = new Period(start, end);
        return diff.toStandardHours().getHours();

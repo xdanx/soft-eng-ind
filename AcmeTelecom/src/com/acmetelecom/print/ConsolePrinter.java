@@ -1,6 +1,8 @@
-package com.acmetelecom;
+package com.acmetelecom.print;
 
-class ConsolePrinter implements Printer
+import com.acmetelecom.print.Printer;
+
+public class ConsolePrinter implements Printer
 {
 
 	public void printHeading(String name, String phoneNumber, String pricePlan) 

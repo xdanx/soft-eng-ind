@@ -76,14 +76,18 @@ Here comes the intro..
 The current implementation for calculating the call costs was not taking correctly into consideration 
 the starting and end times for a call. As a results, calls which were taking place during both off-peak and 
 on-peak times were being charged for the entire duration with the on-peak tariff. For example, for an on-peak
-period 7:00 -> 18:59, a call from 20:30 till 21:30 would be correctly charged for 60 minutes \ast
-off-peak tariff, but a call from  18:30 till 19:30 would be charged incorrectly 60 minutes \ast \textbf{on-peak},
-instead of 30 minutes \ast \textbf{on-peak} + 30 minutes \ast \textbf{off-peak}.
+period 7:00 -> 18:59, a call from 20:30 till 21:30 would be correctly charged for $60 minutes \ast
+off-peak tariff$, but a call from  18:30 till 19:30 would be charged incorrectly $60 minutes \ast \textbf{on-peak}$,
+instead of 30 minutes $\ast \textbf{on-peak} + 30 minutes \ast \textbf{off-peak}$.
 
-Our code implementation solves this problem, and the algorithm is as follows: 
-1) For the start call ( Start ), find the next peak time start or end time ( 7:00 or 18:59 ) and save it as T1;
-2) Next, find the last start( Last ) or end time that is before the end call and save it as T2;
-Next, if the 
+Our code implementation solves this problem, and the algorithm is as follows. All notations represented by big letters 
+are DateTime instances:
+
+1) For the start call ( START ), find the next peak time start or end time ( 7:00 or 18:59 ) and save it as T1;
+2) Next, find the last start or end time ( LAST ) that is before the end call and save it as T2;
+The case when START and LAST times are in the same peak or off-peak period is the trivial one and we compute the 
+cost for the call as $(LAST - START) \ast ( on-peak OR off-peak ) tariff$. More 
+
 
 
 
