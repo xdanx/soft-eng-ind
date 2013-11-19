@@ -1,12 +1,12 @@
 package com.acmetelecom;
 
+import com.acmetelecom.utils.DaytimePeakPeriod;
 import com.acmetelecom.BillGenerator;
 import com.acmetelecom.Call;
 import com.acmetelecom.CallEnd;
 import com.acmetelecom.CallEvent;
 import com.acmetelecom.CallStart;
-import com.acmetelecom.DaytimePeakPeriod;
-import com.acmetelecom.MoneyFormatter;
+import com.acmetelecom.utils.MoneyFormatter;
 import com.acmetelecom.customer.CentralCustomerDatabase;
 import com.acmetelecom.customer.CentralTariffDatabase;
 import com.acmetelecom.customer.Customer;
@@ -49,12 +49,12 @@ public class BillingSystem
     {
         
         List<CallEvent> customerEvents = new ArrayList<CallEvent>();
-        List<Call> calls = new ArrayList<Call>();
-        List<LineItem> items = new ArrayList<LineItem>();
-        DaytimePeakPeriod peakPeriod = new DaytimePeakPeriod();
-        BigDecimal totalBill = new BigDecimal("0");
-        BigDecimal cost      = new BigDecimal("0");
-        CallEvent start 	 = null;
+        List<Call> calls               = new ArrayList<Call>();
+        List<LineItem> items           = new ArrayList<LineItem>();
+        DaytimePeakPeriod peakPeriod   = new DaytimePeakPeriod();
+        BigDecimal totalBill           = new BigDecimal("0");
+        BigDecimal cost                = new BigDecimal("0");
+        CallEvent start 	       = null;
         
         for (CallEvent callEvent : callLog) 
             if (callEvent.getCaller().equals(customer.getPhoneNumber())) 
