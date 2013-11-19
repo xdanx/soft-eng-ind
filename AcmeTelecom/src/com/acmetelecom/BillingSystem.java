@@ -11,6 +11,7 @@ import com.acmetelecom.customer.CentralCustomerDatabase;
 import com.acmetelecom.customer.CentralTariffDatabase;
 import com.acmetelecom.customer.Customer;
 import com.acmetelecom.customer.Tariff;
+import com.acmetelecom.utils.LineItem;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -153,32 +154,6 @@ public class BillingSystem
         
     }
     
-    static class LineItem {
-        private Call call;
-        private BigDecimal callCost;
-
-        public LineItem(Call call, BigDecimal callCost) {
-            this.call = call;
-            this.callCost = callCost;
-        }
-
-        public String date() {
-            return call.date();
-        }
-
-        public String callee() {
-            return call.callee();
-        }
-
-        public String durationMinutes() {
-            return "" + call.durationSeconds() / 60 + ":" + String.format("%02d", call.durationSeconds() % 60);
-        }
-
-        public BigDecimal cost() {
-            return callCost;
-        }
-    }
-
     // Debug functions
     public void debugCallInitiated(String caller, String callee, long ts) {
         callLog.add(new CallStart(caller, callee, ts));

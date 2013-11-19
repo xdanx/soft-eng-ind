@@ -3,12 +3,16 @@ package com.acmetelecom;
 import org.joda.time.DateTime;
 
 import com.acmetelecom.customer.Customer;
+import com.acmetelecom.utils.MoneyFormatter;
+import java.math.BigDecimal;
 
 public class Runner 
 {
 	public static void main(String[] args) throws Exception 
 	{
             
+            System.out.println(MoneyFormatter.penceToPounds(new BigDecimal(111)));
+            /*
 		System.out.println("Running...");
 		BillingSystem billingSystem = new BillingSystem();
 		DateTime dt		= new DateTime (2010, 11, 13, 15, 30, 00);
@@ -28,5 +32,6 @@ public class Runner
 		
 		billingSystem.createBillFor(customerBO$$);
 		//billingSystem.createCustomerBills();
+                */ 
 	}
 }

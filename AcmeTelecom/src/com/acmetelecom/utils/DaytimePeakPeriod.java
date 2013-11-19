@@ -10,8 +10,7 @@ public class DaytimePeakPeriod
 
     public boolean offPeak(DateTime time) 
     {
-        int hour = time.getHourOfDay();
-        return hour < 7 || hour >= 19;
+        return (time.getHourOfDay() < 7 || time.getHourOfDay() >= 19);
     }
     
     
@@ -48,7 +47,9 @@ public class DaytimePeakPeriod
     	DateTime answer;
 
         if(dt.getHourOfDay() >= 7  && dt.getHourOfDay() < 19)
-        	answer = dt.withHourOfDay(7).withMinuteOfHour(0).withSecondOfMinute(0);
+        {
+            answer = dt.withHourOfDay(7).withMinuteOfHour(0).withSecondOfMinute(0);
+        }
         else 
         {
             if(dt.getHourOfDay() < 7)
