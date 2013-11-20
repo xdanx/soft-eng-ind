@@ -12,9 +12,9 @@ public class BillingSys {
 	CallLog callLog;
 	CustomerRecords customerRecords;
 	BillCreator billCreator;
-	public BillingSys(CallLog callLog, CustomerDatabase customerDatabase, BillCreator billCreator) {
+	public BillingSys(CallLog callLog, CustomerRecords customerDatabase, BillCreator billCreator) {
 		this.callLog = callLog;
-		this.customerDatabase = customerDatabase;
+		this.customerRecords = customerRecords;
 		this.billCreator = billCreator;
 	}
 

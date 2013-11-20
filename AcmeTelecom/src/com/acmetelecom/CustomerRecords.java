@@ -1,5 +1,7 @@
 package com.acmetelecom;
 
+import com.acmetelecom.customer.Customer;
+
 public interface CustomerRecords {
-	public String getCustomerName(String number);
+	public Customer getCustomer(String number);
 }

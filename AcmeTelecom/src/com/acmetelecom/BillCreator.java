@@ -1,5 +1,6 @@
 package com.acmetelecom;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.List;
@@ -13,14 +14,15 @@ public class BillCreator {
 	
 	public BillCreator(BillingJob billJob) {
 		this.billingJob = billJob;
+		this.billPrinter = billPrinter;
 	}
 	
 	public List<String> createBills(CallLog log, CustomerRecords customers) {
 		Map<String, List<CallEvent>> callers = billingJob.aggregateCalls(log);
 		List<String> printedBills = new ArrayList<String>();
 		for (String caller : callers.keySet()) {
-			Bill bill = billingJob.createBill(caller, callers.get(caller));
-			bill.setCustomerName(customers.getCustomerName(caller));
+			Customer customer = customers.getCustomer(caller);
+			Bill bill = billingJob.createBill(customer, callers.get(caller));
 			printedBills.add(billPrinter.printBill(bill));
 		}
 		return printedBills;

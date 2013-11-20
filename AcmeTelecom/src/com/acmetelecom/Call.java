@@ -11,34 +11,35 @@ import java.util.Date;
 public class Call {
     private CallEvent start;
     private CallEvent end;
-    
-
-    
+    // normally doesn't belong here but this makes code smaller
+    private BigDecimal cost;
+        
     public Call(CallEvent start, CallEvent end) {
         this.start = start;
         this.end = end;
-        
     }
 
-    public String callee() {
+    public String getCallee() {
         return start.getCallee();
     }
 
-    public int durationSeconds() {
+    public int getDurationSeconds() {
         return (int) (((end.time() - start.time()) / 1000));
     }
-    
-   
-    public String date() {
-        return SimpleDateFormat.getInstance().format(new Date(start.time()));
-    }
-
-    public Date startTime() {
+     
+    public Date getStartTime() {
         return new Date(start.time());
     }
 
-    public Date endTime() {
+    public Date getEndTime() {
         return new Date(end.time());
     }
     
+    public BigDecimal getCost() {
+    	return cost;
+    }
+    
+    public void setCost(BigDecimal cost) {
+    	this.cost = cost;
+    }
 }
