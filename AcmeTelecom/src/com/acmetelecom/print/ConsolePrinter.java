@@ -16,9 +16,8 @@ public class ConsolePrinter implements Printer
 
 	public boolean printItem(String time, String callee, String duration, String cost) 
 	{
-		System.out.println("Time: " + time + " - Caller " + callee);
-		System.out.println("Duration: " + duration + " - Cost: " + cost);
-		
+		System.out.println("* Time: " + time + " - Called " + callee);
+		System.out.println("* Duration: " + duration + " - Cost: " + cost);
 		return true;
 	}
 	public boolean printTotal(String total) 

@@ -11,10 +11,10 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.acmetelecom.Call;
-import com.acmetelecom.CallEnd;
-import com.acmetelecom.CallEvent;
-import com.acmetelecom.CallStart;
+import com.acmetelecom.calls.Call;
+import com.acmetelecom.calls.CallEnd;
+import com.acmetelecom.calls.CallEvent;
+import com.acmetelecom.calls.CallStart;
 
 public class CallTest {
 	public String caleeNumber = "0987654321";

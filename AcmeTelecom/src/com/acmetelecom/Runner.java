@@ -11,8 +11,7 @@ public class Runner
 	public static void main(String[] args) throws Exception 
 	{
             
-            System.out.println(MoneyFormatter.penceToPounds(new BigDecimal(111)));
-            /*
+        //    System.out.println(MoneyFormatter.penceToPounds(new BigDecimal(111)));
 		System.out.println("Running...");
 		BillingSystem billingSystem = new BillingSystem();
 		DateTime dt		= new DateTime (2010, 11, 13, 15, 30, 00);
@@ -31,7 +30,7 @@ public class Runner
 		billingSystem.debugCallCompleted("447766511332", "447722113434", endCall);      
 		
 		billingSystem.createBillFor(customerBO$$);
-		//billingSystem.createCustomerBills();
-                */ 
+		billingSystem.createCustomerBills();
+
 	}
 }

@@ -5,8 +5,8 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.acmetelecom.CallEvent;
-import com.acmetelecom.CallStart;
+import com.acmetelecom.calls.CallEvent;
+import com.acmetelecom.calls.CallStart;
 
 public class CallStartTest {
 	public String calleeNumber = "0987654321";
