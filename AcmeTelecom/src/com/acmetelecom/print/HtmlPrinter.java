@@ -1,6 +1,6 @@
-package com.acmetelecom;
+package com.acmetelecom.print;
 
-class HtmlPrinter implements Printer {
+public class HtmlPrinter implements Printer {
 
     private static Printer instance = new HtmlPrinter();
 
@@ -11,27 +11,37 @@ class HtmlPrinter implements Printer {
         return instance;
     }
 
-    public void printHeading(String name, String phoneNumber, String pricePlan) {
-        beginHtml();
+    public boolean printHeading(String name, String phoneNumber, String pricePlan) {
+    	boolean statusOk = true;
+    	
+        statusOk &= beginHtml();
         System.out.println(h2(name + "/" + phoneNumber + " - " + "Price Plan: " + pricePlan));
-        beginTable();
+        statusOk &= beginTable();
+        
+        return statusOk;
     }
 
-    private void beginTable() {
+    private boolean beginTable() {
         System.out.println("<table border=\"1\">");
         System.out.println(tr(th("Time") + th("Number") + th("Duration") + th("Cost")));
+        
+        return true;
     }
 
-    private void endTable() {
+    private boolean endTable() {
         System.out.println("</table>");
+        
+        return true;
     }
 
     private String h2(String text) {
         return "<h2>" + text + "</h2>";
     }
 
-    public void printItem(String time, String callee, String duration, String cost) {
+    public boolean printItem(String time, String callee, String duration, String cost) {
         System.out.println(tr(td(time) + td(callee) + td(duration) + td(cost)));
+        
+        return true;
     }
 
     private String tr(String text) {
@@ -46,23 +56,31 @@ class HtmlPrinter implements Printer {
         return "<td>" + text + "</td>";
     }
 
-    public void printTotal(String total) {
-        endTable();
+    public boolean printTotal(String total) {
+    	boolean statusOk = true;
+    	
+    	statusOk &= endTable();
         System.out.println(h2("Total: " + total));
-        endHtml();
+        statusOk &= endHtml();
+        
+        return statusOk;
     }
 
-    private void beginHtml() {
+    private boolean beginHtml() {
         System.out.println("<html>");
         System.out.println("<head></head>");
         System.out.println("<body>");
         System.out.println("<h1>");
         System.out.println("Acme Telecom");
         System.out.println("</h1>");
+        
+        return true;
     }
 
-    private void endHtml() {
+    private boolean endHtml() {
         System.out.println("</body>");
         System.out.println("</html>");
+        
+        return true;
     }
 }

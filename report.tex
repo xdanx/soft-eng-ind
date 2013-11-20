@@ -52,27 +52,14 @@
 
 %%% END Article customizations
 
-%%% The "real" document content comes below...
-
-
 \title{Software Engineering For Industry \\ Coursework 2 - Report}
 \author{Dan Demeter, Dan Octavian, Razvan Rosie, Marius Telespan \\Imperial College London}
-
-
 
 \begin{document}
 \maketitle
 
 \begin{abstract}
 Write this at the very end. It must respond to questions like:
-\begin{itemize}
- \item {What - Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
- when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.
- It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.}
- \item {When}
- \item {How}
- \item {Who}
-\end{itemize}
 
 Keywords:
 \end{abstract}
@@ -82,59 +69,58 @@ Keywords:
 \section{Introduction}
 Here comes the intro..
 
-\section{Acceptance Tests}
-As part of the Acceptance Test Driven Development / Behaviour Driven Development (ATDD/BDD) process, FitNesse was selected for writing user acceptance tests against Java software.
-This automated testing tool communicates both business logic specification, as well as the outcome of compliance with tests, to non-technical clients, via a fluent interface.
+\section{ACME Telecom v2}
 
-\subsection{Regression Tests}
-Within the original specification, an example execution, via the main entry point in the Runner class, was provided together with the description, to illustrate a sample usage of the system.
-This basically involved registering a sequence of callInitiated and callCompleted events with a centralised BillingSystem, before generating a consolidated list of phone bills for its predefined list of customers.
+\subsection{Improved Cost Calculator}
 
-\subsection{Tests for new code}
-These documents were highly useful in assisting us during development of the codebase.
-A reference of new business logic specifications, in a form closest to natural language, was now available to the team for establishing, disambiguating, and consenting to a common understanding of the project plan.
+The old implementation for calculating the call costs was not taking correctly into consideration 
+the starting and end times for a call. As a results, calls which were taking place during both off-peak and 
+on-peak times were being charged for the entire duration with the on-peak tariff. For example, for an on-peak
+period of 7:00 - 18:59, a call from 20:30 till 21:30 would be correctly charged for 60 minutes $\ast$
+off-peak tariff, but a call from  18:30 till 19:30 would be charged incorrectly 60 minutes $\ast$ \textbf{on-peak},
+instead of 30 minutes $\ast$ \textbf{on-peak} $+$ 30 minutes $\ast$ \textbf{off-peak}.
 
-\section{Unit tests}
-Unit tests emphasise rigorous testing of individual components in isolation. The premise
-of this approach is that these tests should fail only when the design contract for the module
-is violated.
-This is most frequently employed in Test Driven Development (TDD) lifecycles, where
-the unit test suite the developer comes up with guides subsequent implementation of the
-program logic, until all these tests pass upon completion, thereby fulfilling the original
-design contract.
+Our code implementation solves this problem, and the algorithm is as follows. All notations represented by big letters 
+are DateTime instances:
 
-Test code coverage was also provided for FairPeak24CostCalculator, an extension dealing
-with calls lasting for more than 24 hours at a time, by ensuring it performed correctly
-under circumstances of calls spanning beyond a single peak/off-peak boundary.
-In order to increase our test code coverage, measured using EMMA (Appendix A.2),
-Google?s CodePro AnalytiX Java developer tool was used to generate unit tests for the
-remaining classes, so that basic tests for language constructs were added, for example,
-validation of object initialisation within class constructor.
+1) For the start call ( START ), find the next peak time start or end time ( 7:00 or 18:59 ) and save it as T1;
 
+2) Next, find the last start or end on-peak time that is before the end call ( END ) and save it as T2;
+The case when START and LAST times are in the same peak or off-peak period is the trivial one: we compute the 
+cost for the call as (LAST - START) $\ast$ (on-peak OR off-peak) tariff. The tariff type can be easily found. 
 
+In the other case when START and LAST times are in different zones, we calculate how many 12 hours intervals are between T1 and T2.
+If that number is even, then we know that the phone call lasted $\leq$ 24 hours. So we know that 1/2 of that time the call should be 
+charged with the offpeak tariff, and the other 1/2 time should be charged with the on-peak time. 
+In case that number is odd, then we identify the one extra period and which tariff should be applied to it, and then for the rest of the 
+even periods, we apply the tactic discussed above. 
 
-\section{Extra features}
+In the end, the final cost is the total cost for the 12 hours periods + (the cost between START and T1 (C1)) + (the cost between T2 and END (C2). 
+Again, for C1 and C2 we can easily identify what tariff we need to use (peak or off-peak one).
 
-\subsection{Fair Peak calculator}
-The FairPeakCalculator will only charge a customer for the call according to the prevailing
-rate at that time. A code snippet of the pseudocode can be found in Appendix B.2.
-The algorithm essentially performs a case-based analysis to reason about the cost com-
-putation. DaytimePeakPeriod provides all the typical derived information needed to it for
-this calculation. For example, it is able to figure out the next off-peak cutoff time from a
-given time for the Calculator.
-In addition, we took advantage of JodaTime to manage the complexity associated with
-date and time handling, especially the functionality for Duration. This simplifies the cost calculation to:
+Also, JodaTime helped us a lot in order to manage all the complexity for handling periods of time,
+translating the a date into milliseconds and subtracting 2 different Dates. 
 
-\subsection{HTML Printer}
-There were several shortcomings in the original HtmlPrinter. It was creating non-W3C-
-compliant, malformed HTML, directing this to standard output, and not using any tem-
-plate engine, hence the presence of FreeMarker.
-In using FreeMarker, we were not only able to style the generated HTML content us-
-ing jQueryUI, to improve usability and the overall user experience in general, but at
-the same time, also maintain the original HTML output as a printout by declaring CSS
+\subsection{Output Interfaces}
+
+In terms of generating the status of the bills for the customers, the system was directing its results to the Standard Output pipe. 
+Unfortunately, the only output interface (HtmlPrinter) was generating HTML tables which were not following the W3C standards. 
+Because we have decided to make our system as reliable as possible, we had to take into consideration different set-ups where our system would be running. 
+For example, it could run on a server without any output attached (headless server), or for debugging purposes, 
+the billing output should be easily read and parsed from the terminal. 
+By using the (MISSING - what design pattern? ) design pattern, we have restructured our Output Interface as an abstract Class, 
+having different classes extend it. These classes will be actual printing and formatting the results in a way suitable for the environment.
+The current classes we have implemented or changed in the system are: HTMLPrinter and ConsolePrinter. HTMLPrinter is the initial implementation 
+of printing the results in an HTML format. We have decided \textbf{not} to change it, because some other legacy software might be parsing the
+HTML file generated by our system. This is a major risk, because we can't control what other software interacts with the current one.
+
+Instead, for 100\% legacy compatibility, we have decided to add new Classes extending the Output Interface.
+The first one we have added is the ConsolePrinter class that is used to print the BillingSystem output in a readable format used for debugging.
+This is what we have used to test our product, integrating the ConsolePrinter with the Tests we ran. 
 
 
-\section{Code refactoring}
+
+\section{Code improvement}
 
 \subsection{Handling the cyclic dependencies}
 This was caused by an inner LineItem class within BillingSystem. This was required by
@@ -163,7 +149,7 @@ constants belong in a properties file, in the respective resources folder.
 
 
 
-\section{Extra (hard) Work}
+\section{Extra Work}
 
 \subsection{Source code validation}
 Another important aspect of software engineering is source code validation. Besides the
