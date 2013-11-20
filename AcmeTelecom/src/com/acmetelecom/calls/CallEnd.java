@@ -1,4 +1,4 @@
-package calls;
+package com.acmetelecom.calls;
 
 public class CallEnd extends CallEvent {
     public CallEnd(String caller, String callee) {

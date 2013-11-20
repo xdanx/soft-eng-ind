@@ -1,4 +1,4 @@
-package calls;
+package com.acmetelecom.calls;
 
 public abstract class CallEvent {
     private String caller;
