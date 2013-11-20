@@ -30,6 +30,7 @@
 \usepackage{paralist} % very flexible & customisable lists (eg. enumerate/itemize, etc.)
 \usepackage{verbatim} % adds environment for commenting out blocks of text & for better verbatim
 \usepackage{subfig} % make it possible to include more than one captioned figure/table in a single float
+\usepackage{authblk}
 % These packages are all incorporated in the memoir class to one degree or another...
 
 %%% HEADERS & FOOTERS
@@ -53,7 +54,11 @@
 %%% END Article customizations
 
 \title{Software Engineering For Industry \\ Coursework 2 - Report}
-\author{Dan Demeter, Dan Octavian, Razvan Rosie, Marius Telespan \\Imperial College London}
+\author[1]{Dan Demeter\thanks{dan.demeter10@imperial.ac.uk}}
+\author[1]{Dan Octavian\thanks{dan.octavian10@imperial.ac.uk}}
+\author[1]{Razvan Rosie\thanks{razvan.rosie10@imperial.ac.uk}}
+\author[1]{Marius Telespan\thanks{marius.telespan10@imperial.ac.uk}}
+\affil[1]{Department of Computing, Imperial College London}
 
 \begin{document}
 \maketitle
@@ -61,19 +66,40 @@
 \begin{abstract}
 Write this at the very end. It must respond to questions like:
 
+What? This report 
+
+How?
+
+When?
+
+
 Keywords:
 \end{abstract}
 
-\pagebreak
 
 \section{Introduction}
-Here comes the intro..
+AcmeTelecom is a telecomommunication company which is currently running calculating the pricing and billing calculations
+for all of Acme's mobile phone customers in the following way: if a customer begins a call during the peak time, and the call 
+continues in off-peak period, then the whole call is billed at the the peak rate. Similarly, if a customer the call starts in 
+the off-peak periodand finish in the peak time, the whole call is billed as being a peak time call. Any call that overlaps the 
+peak time period is charged as a peak call.
+
+
+Our job was to refactorize the code, making sure that the billing system is fair. In order to make sure that our changes works,
+we added acceptance and unit tests covering the existing code.
+
+Our report is organised in the following way: {\bf Section 2} presents our implementation of the main feature of the program, which
+allows to fairly compute the billings. {\bf Section 3} presents the way that the code was refactorized. 
+{\bf Section 4} includes the addition features that were added. 
+The fifth section gives an overview of the testing methodologies that were used durin the project, together with the testing tools.
+{\bf Section 6} discusses some design decisions that we have taken.
+The last part of the report offers our concluding remarks and potential improvements for the code.
 
 \section{ACME Telecom v2}
 
-\subsection{Improved Cost Calculator}
+\subsection{The Improved Cost Calculator}
 
-The old implementation for calculating the call costs was not taking correctly into consideration 
+The current implementation for calculating the call costs was not taking correctly into consideration 
 the starting and end times for a call. As a results, calls which were taking place during both off-peak and 
 on-peak times were being charged for the entire duration with the on-peak tariff. For example, for an on-peak
 period of 7:00 - 18:59, a call from 20:30 till 21:30 would be correctly charged for 60 minutes $\ast$
@@ -82,12 +108,14 @@ instead of 30 minutes $\ast$ \textbf{on-peak} $+$ 30 minutes $\ast$ \textbf{off-
 
 Our code implementation solves this problem, and the algorithm is as follows. All notations represented by big letters 
 are DateTime instances:
+\begin{enumerate}
+\item{For the start call ($START$), find the next peak time start or end time ( $7:00$ or $18:59$ ) and save it as $T1$.}
 
-1) For the start call ( START ), find the next peak time start or end time ( 7:00 or 18:59 ) and save it as T1;
+\item{Next, find the last start or end on-peak time that is before the end call ($END$) and save it as $T2$.}
+\end{enumerate}
 
-2) Next, find the last start or end on-peak time that is before the end call ( END ) and save it as T2;
-The case when START and LAST times are in the same peak or off-peak period is the trivial one: we compute the 
-cost for the call as (LAST - START) $\ast$ (on-peak OR off-peak) tariff. The tariff type can be easily found. 
+The case when $START$ and $LAST$ times are in the same peak or off-peak period is the trivial one: we compute the 
+cost for the call as ($LAST$ - $START$) $\ast$ (on-peak OR off-peak) tariff. The tariff type can be easily found. 
 
 In the other case when START and LAST times are in different zones, we calculate how many 12 hours intervals are between T1 and T2.
 If that number is even, then we know that the phone call lasted $\leq$ 24 hours. So we know that 1/2 of that time the call should be 
@@ -101,27 +129,41 @@ Again, for C1 and C2 we can easily identify what tariff we need to use (peak or 
 Also, JodaTime helped us a lot in order to manage all the complexity for handling periods of time,
 translating the a date into milliseconds and subtracting 2 different Dates. 
 
-\subsection{Output Interfaces}
-
-In terms of generating the status of the bills for the customers, the system was directing its results to the Standard Output pipe. 
-Unfortunately, the only output interface (HtmlPrinter) was generating HTML tables which were not following the W3C standards. 
-Because we have decided to make our system as reliable as possible, we had to take into consideration different set-ups where our system would be running. 
-For example, it could run on a server without any output attached (headless server), or for debugging purposes, 
-the billing output should be easily read and parsed from the terminal. 
-By using the (MISSING - what design pattern? ) design pattern, we have restructured our Output Interface as an abstract Class, 
-having different classes extend it. These classes will be actual printing and formatting the results in a way suitable for the environment.
-The current classes we have implemented or changed in the system are: HTMLPrinter and ConsolePrinter. HTMLPrinter is the initial implementation 
-of printing the results in an HTML format. We have decided \textbf{not} to change it, because some other legacy software might be parsing the
-HTML file generated by our system. This is a major risk, because we can't control what other software interacts with the current one.
-
-Instead, for 100\% legacy compatibility, we have decided to add new Classes extending the Output Interface.
-The first one we have added is the ConsolePrinter class that is used to print the BillingSystem output in a readable format used for debugging.
-This is what we have used to test our product, integrating the ConsolePrinter with the Tests we ran. 
 
 
 
-\section{Code improvement}
+\subsection{Output (Printer) Interface}
 
+There were several shortcomings in the original HtmlPrinter. It was creating non-W3C-
+compliant, malformed HTML, directing this to standard output, and not using any tem-
+plate engine, hence the presence of FreeMarker.
+In using FreeMarker, we were not only able to style the generated HTML content us-
+ing jQueryUI, to improve usability and the overall user experience in general, but at
+the same time, also maintain the original HTML output as a printout by declaring CSS
+
+
+
+
+
+\section{Refactoring the code}
+
+\subsection{Package Organisation}
+One of the very first tasks was to reorganise the existing source code in a new way.
+This was because the existing code was simplistic and not modular enough. The way that
+we have proceed was to 
+
+\begin{enumerate}
+ \item{com.actelecom.calls}
+ \item{com.actelecom.print}
+ \item{com.actelecom.utils}
+\end{enumerate}
+
+Similarly, we have decided to organise the tests in the same manner.
+
+
+
+
+\iffalse
 \subsection{Handling the cyclic dependencies}
 This was caused by an inner LineItem class within BillingSystem. This was required by
 BillGenerator, as it was populating a data structure containing all phone calls made by
@@ -129,6 +171,7 @@ customers.
 To solve this, LineItem was extracted out into the com.acmetelecom.util subpackage,
 thus removing this cyclic dependency, and at the same time, evolving the overall system
 towards a more reasonable structure.
+\fi
 
 \subsection{Code refurbishment}
 The existing codebase was restructured to become increasingly modular. By applying con-
@@ -145,11 +188,17 @@ yet test code is able to reference the Class Under Test (CUT). Test code is also
 as hierarchical TestSuites, to selectively test different segments of the codebase. Hardcoded
 constants belong in a properties file, in the respective resources folder.
 
+\subsection{Removing the cyclic dependencies}
+A cyclic dependecy was by the inner class $LineItem$, which was placed inside the $BillingSystem.java$.
+The $LineItem$ was used to store customer's phone calls in a data structure.
 
-
+In order to remove the cyclic dependecy, we jave created a new external class $LineItem$ placed in the 
+utilities package.
 
 
 \section{Extra Work}
+\subsection{EMR}
+Aws
 
 \subsection{Source code validation}
 Another important aspect of software engineering is source code validation. Besides the
@@ -158,12 +207,6 @@ and CodePro AnalytiX to audit code, produce metrics, such as Afferent/Efferent C
 lings, to measure code quality, and find similar/dead code to identify and remove redund-
 ancy, hence streamlining the codebase, in preparation for deployment to target environ-
 ment.
-
-\subsection{Testing}
-Testing was further augmented by importing techniques used in web applications for ex-
-ample, like the Selenium web browser automated testing tool, and JSoup to construct
-HTML parse trees, and navigate through them using combinations of familiar jQuery-like
-selectors, for better code coverage, and hence greater confidence in the final end product.
 
 \subsection{Documentation}
 On top of the builtin javadoc tool, the JAutodoc tool was used to generate Java documentation of typical classes like the model CustomerBill for completeness.
@@ -176,8 +219,36 @@ leftover. The cost for this remaining part of the call can be calculated using t
 FairPeakCalculator, then added together for the final result, according to the expression:
 total peak seconds in a day * peak rate + total offpeak seconds in a day * offpeak rate
 
-\section{Software Engineering stuff}
-here comes some stuff
+\section{Testing}
+Testing was further augmented by importing techniques used in web applications for ex-
+ample, like the Selenium web browser automated testing tool, and JSoup to construct
+HTML parse trees, and navigate through them using combinations of familiar jQuery-like
+selectors, for better code coverage, and hence greater confidence in the final end product.
+
+\subsection{Unit Testing}
+Unit testing
+
+\subsection{Acceptance Testing}
+acceptance testing
+
+\section{Software Engineering Practices}
+During the implementation stage, good Software  Development practices were maintained by the members of the goup.
+We have extensively used some of the design patterns and development methodologies that we have learned during the $Software$ 
+$Engineering$ courses at $Imperial$.
+
+\subsection{Project Management}
+Managing the project was a crucial aspect during the project. The group had regular $Scrum$ meetings in order to discuss  
+the progress of the project. 
+
+\subsection{Design of the solution}
+Some patterns.
+
+
+\subsection{Agile Development}
+We have used the $Test$ $Driven$ $Development$ when refactoring the codebase.
+A
+
+\subsection{}
 
 \section{Conclusion}
 In conclusion, our prohect have demonstrated in this project how to go about engineering software
@@ -199,8 +270,6 @@ libraries, which are far more widely used or tested, thus more reliable. There c
 the possibility to attempt dependency injection using Google Guice, to improve testability
 of, and simplify deployment across different production environments.
 
-\pagebreak
-
 
 \begin{thebibliography}{9}
 
@@ -211,6 +280,19 @@ of, and simplify deployment across different production environments.
   2nd Edition,
   1994.
 
+\bibitem{mockito}
+  \emph{Mockito}.
+  http://docs.mockito.google\\code.com/hg/org/mockito/Mockito.html  
+
+\bibitem{JUnit}
+  \emph{JUnit}.
+  https://github.com/junit-team/junit/wiki
+
+\bibitem{UncleBob}
+  \emph{Design Principles and Design Patterns}.
+  Robert C. Martin,
+  2000
+  
 \end{thebibliography}
 
 
