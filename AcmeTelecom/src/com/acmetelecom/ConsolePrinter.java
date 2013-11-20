@@ -12,8 +12,8 @@ class ConsolePrinter implements Printer
 
 	public void printItem(String time, String callee, String duration, String cost) 
 	{
-		System.out.println("Time: " + time + " - Caller " + callee);
-		System.out.println("Duration: " + duration + " - Cost: " + cost);
+		System.out.println("* Time: " + time + " - Called " + callee);
+		System.out.println("* Duration: " + duration + " - Cost: " + cost);
 	}
 	public void printTotal(String total) 
 	{		
