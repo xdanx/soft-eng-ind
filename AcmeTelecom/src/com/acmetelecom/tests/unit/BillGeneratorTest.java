@@ -37,7 +37,7 @@ public class BillGeneratorTest {
 	}
 	@Test
 	public void test() {
-		assertTrue("bills are always send", billGenerator.send(customer, calls, totalBill));
+		assertTrue("bills are always sent", billGenerator.send(customer, calls, totalBill));
 	}
 
 }

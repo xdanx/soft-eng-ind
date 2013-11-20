@@ -2,15 +2,6 @@ package com.acmetelecom.print;
 
 public class HtmlPrinter implements Printer {
 
-    private static Printer instance = new HtmlPrinter();
-
-    private HtmlPrinter() {
-    }
-
-    public static Printer getInstance() {
-        return instance;
-    }
-
     public boolean printHeading(String name, String phoneNumber, String pricePlan) {
     	boolean statusOk = true;
     	
