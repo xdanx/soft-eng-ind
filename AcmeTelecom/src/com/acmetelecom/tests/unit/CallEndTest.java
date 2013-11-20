@@ -4,8 +4,8 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import com.acmetelecom.CallEnd;
-import com.acmetelecom.CallEvent;
+import calls.CallEnd;
+import calls.CallEvent;
 
 public class CallEndTest {
 	public String calleeNumber = "0987654321";

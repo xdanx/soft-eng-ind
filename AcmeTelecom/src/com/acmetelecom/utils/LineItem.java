@@ -4,7 +4,7 @@
  */
 package com.acmetelecom.utils;
 
-import com.acmetelecom.Call;
+import calls.Call;
 import java.math.BigDecimal;
 
 /**

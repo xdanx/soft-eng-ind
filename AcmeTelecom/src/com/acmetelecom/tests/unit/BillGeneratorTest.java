@@ -10,9 +10,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.acmetelecom.BillGenerator;
-import com.acmetelecom.Call;
-import com.acmetelecom.CallEnd;
-import com.acmetelecom.CallStart;
+import calls.Call;
+import calls.CallEnd;
+import calls.CallStart;
 import com.acmetelecom.customer.Customer;
 import com.acmetelecom.utils.LineItem;
 
