@@ -1,6 +1,9 @@
 package com.acmetelecom;
 
 import javax.swing.text.DateFormatter;
+
+import org.joda.time.DateTime;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DateFormat;
@@ -13,7 +16,6 @@ public class Call {
     private CallEvent end;
     // normally doesn't belong here but this makes code smaller
     private BigDecimal cost;
-        
     public Call(CallEvent start, CallEvent end) {
         this.start = start;
         this.end = end;
@@ -27,17 +29,18 @@ public class Call {
         return (int) (((end.time() - start.time()) / 1000));
     }
      
-    public Date getStartTime() {
-        return new Date(start.time());
+    public DateTime getStartTime() {
+        return new DateTime(start.time());
     }
 
-    public Date getEndTime() {
-        return new Date(end.time());
+    public DateTime getEndTime() {
+        return new DateTime(end.time());
     }
     
     public BigDecimal getCost() {
     	return cost;
     }
+    
     
     public void setCost(BigDecimal cost) {
     	this.cost = cost;
