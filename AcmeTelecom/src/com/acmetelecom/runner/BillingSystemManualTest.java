@@ -27,7 +27,8 @@ public class BillingSystemManualTest {
 		log.logCallEnd("447777765432", "447711111111", time);
 		
 		BillCreator billCreator = new BillCreator(new HtmlBillPrinter());
-		List<String> bills = billCreator.createBills(log, CentralCustomerDatabase.getInstance());
+		List<String> bills = billCreator.createBills(log, CentralCustomerDatabase.getInstance(),
+																									CentralTariffDatabase.getInstance());
 		for (String bill : bills) {
 			System.out.println(bill);
 		}

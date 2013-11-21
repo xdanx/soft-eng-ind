@@ -17,13 +17,14 @@ public class BillCreator {
 		this.billPrinter = billPrinter;
 	}
 	
-	public List<String> createBills(CallLog log, CustomerDatabase customers) {
+	public List<String> createBills(CallLog log, CustomerDatabase customers,
+			TariffLibrary tariffLibrary) {
 		Map<String, List<CallEvent>> callers = billingJob.aggregateCalls(log);
 		List<String> printedBills = new ArrayList<String>();
 		for (Customer customer : customers.getCustomers()) {
 			List<CallEvent> events = callers.get(customer.getPhoneNumber());
 			if (events == null) events = new ArrayList<CallEvent>(); // put an empty list; no calls
-			Bill bill = billingJob.createBill(customer, events);
+			Bill bill = billingJob.createBill(customer, tariffLibrary.tarriffFor(customer), events);
 			printedBills.add(billPrinter.printBill(bill));
 		}
 		return printedBills;

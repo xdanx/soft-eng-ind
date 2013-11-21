@@ -38,7 +38,7 @@ public class BillingJob {
 		return aggregated;
 	}
 	
-	public Bill createBill(Customer customer, List<CallEvent> callEvents) {
+	public Bill createBill(Customer customer, Tariff tariff, List<CallEvent> callEvents) {
 		/*TODO: put bill creation logic here. what dan and razvan implemented */
 		
     List<Call> calls               = new ArrayList<Call>();
@@ -63,7 +63,6 @@ public class BillingJob {
     for (Call call : calls) 
     {
         /* Declarations */
-        Tariff tariff = CentralTariffDatabase.getInstance().tarriffFor(customer);
         cost = new BigDecimal("0");
         DateTime startCall             = call.getStartTime();
         DateTime endCall               = call.getEndTime();
