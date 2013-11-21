@@ -35,10 +35,10 @@ public class DaytimePeakPeriodTest {
 	public void testGetNextHigherDelimiter_1()
 		throws Exception {
 		DateTime dt = new DateTime();
-		dt.toDateMidnight();
-		dt.plusHours(2);
-		dt.plusMinutes(50);
-		dt.plusSeconds(600);
+		dt = dt.toDateMidnight().toDateTime();
+		dt = dt.plusHours(2);
+		dt = dt.plusMinutes(50);
+		dt = dt.plusSeconds(600);
 
 		DateTime result = DaytimePeakPeriod.getNextHigherDelimiter(dt);
 
@@ -47,13 +47,13 @@ public class DaytimePeakPeriodTest {
 		assertEquals(1, result.getEra());
 		assertEquals(dt.getDayOfYear(), result.getDayOfYear());
 		assertEquals(dt.getDayOfMonth(), result.getDayOfMonth());
-		assertEquals(19, result.getHourOfDay());
+		assertEquals(7, result.getHourOfDay());
 		assertEquals(2013, result.getWeekyear());
 		assertEquals(dt.getMonthOfYear(), result.getMonthOfYear());
 		assertEquals(2013, result.getYearOfEra());
 		assertEquals(0, result.getMinuteOfHour());
-		assertEquals(true, result.isAfterNow());
-		assertEquals(false, result.isBeforeNow());
+		assertEquals(false, result.isAfterNow());
+		assertEquals(true, result.isBeforeNow());
 		assertEquals(false, result.isEqualNow());
 	}
 
@@ -61,9 +61,10 @@ public class DaytimePeakPeriodTest {
 	public void testGetNextHigherDelimiter_2()
 		throws Exception {
 		DateTime dt = new DateTime();
-		dt.plusHours(2);
-		dt.plusMinutes(50);
-		dt.plusSeconds(600);
+		dt = dt.toDateMidnight().toDateTime();
+		dt = dt.plusHours(2);
+		dt = dt.plusMinutes(50);
+		dt = dt.plusSeconds(600);
 
 		DateTime result = DaytimePeakPeriod.getNextHigherDelimiter(dt);
 
@@ -72,13 +73,13 @@ public class DaytimePeakPeriodTest {
 		assertEquals(1, result.getEra());
 		assertEquals(dt.getDayOfYear(), result.getDayOfYear());
 		assertEquals(dt.getDayOfMonth(), result.getDayOfMonth());
-		assertEquals(19, result.getHourOfDay());
+		assertEquals(7, result.getHourOfDay());
 		assertEquals(2013, result.getWeekyear());
 		assertEquals(dt.getMonthOfYear(), result.getMonthOfYear());
 		assertEquals(2013, result.getYearOfEra());
 		assertEquals(0, result.getMinuteOfHour());
-		assertEquals(true, result.isAfterNow());
-		assertEquals(false, result.isBeforeNow());
+		assertEquals(false, result.isAfterNow());
+		assertEquals(true, result.isBeforeNow());
 		assertEquals(false, result.isEqualNow());
 	}
 
@@ -86,9 +87,10 @@ public class DaytimePeakPeriodTest {
 	public void testGetNextHigherDelimiter_3()
 		throws Exception {
 		DateTime dt = new DateTime();
-		dt.plusHours(2);
-		dt.plusMinutes(50);
-		dt.plusSeconds(600);
+		dt = dt.toDateMidnight().toDateTime();
+		dt = dt.plusHours(2);
+		dt = dt.plusMinutes(50);
+		dt = dt.plusSeconds(600);
 
 		DateTime result = DaytimePeakPeriod.getNextHigherDelimiter(dt);
 
@@ -97,13 +99,13 @@ public class DaytimePeakPeriodTest {
 		assertEquals(1, result.getEra());
 		assertEquals(dt.getDayOfYear(), result.getDayOfYear());
 		assertEquals(dt.getDayOfMonth(), result.getDayOfMonth());
-		assertEquals(19, result.getHourOfDay());
+		assertEquals(7, result.getHourOfDay());
 		assertEquals(2013, result.getWeekyear());
 		assertEquals(dt.getMonthOfYear(), result.getMonthOfYear());
 		assertEquals(2013, result.getYearOfEra());
 		assertEquals(0, result.getMinuteOfHour());
-		assertEquals(true, result.isAfterNow());
-		assertEquals(false, result.isBeforeNow());
+		assertEquals(false, result.isAfterNow());
+		assertEquals(true, result.isBeforeNow());
 		assertEquals(false, result.isEqualNow());
 	}
 
@@ -138,24 +140,24 @@ public class DaytimePeakPeriodTest {
 	public void testGetNextLowerDelimiter_2()
 		throws Exception {
 		DateTime dt = new DateTime();
-		dt.toDateMidnight();
-		dt.plusHours(2);
-		dt.plusMinutes(50);
-		dt.plusSeconds(600);
+		dt = dt.toDateMidnight().toDateTime();
+		dt = dt.plusHours(2);
+		dt = dt.plusMinutes(50);
+		dt = dt.plusSeconds(600);
 
 		DateTime result = DaytimePeakPeriod.getNextLowerDelimiter(dt);
 
 		assertNotNull(result);
 		assertEquals(2013, result.getYear());
 		assertEquals(1, result.getEra());
-		assertEquals(dt.getDayOfYear(), result.getDayOfYear());
-		assertEquals(dt.getDayOfMonth(), result.getDayOfMonth());
-		assertEquals(7, result.getHourOfDay());
+		assertEquals(dt.getDayOfYear()-1, result.getDayOfYear());
+		assertEquals(dt.getDayOfMonth()-1, result.getDayOfMonth());
+		assertEquals(19, result.getHourOfDay());
 		assertEquals(2013, result.getWeekyear());
 		assertEquals(11, result.getMonthOfYear());
 		assertEquals(2013, result.getYearOfEra());
 		assertEquals(0, result.getMinuteOfHour());
-		assertEquals(420, result.getMinuteOfDay());
+		assertEquals(1140, result.getMinuteOfDay());
 		assertEquals(false, result.isAfterNow());
 		assertEquals(true, result.isBeforeNow());
 		assertEquals(false, result.isEqualNow());
@@ -193,10 +195,10 @@ public class DaytimePeakPeriodTest {
 		throws Exception {
 		DaytimePeakPeriod fixture = new DaytimePeakPeriod();
 		DateTime time = new DateTime();
-
+		time = time.toDateMidnight().toDateTime();
 		boolean result = fixture.offPeak(time);
 
-		assertEquals(false, result);
+		assertEquals(true, result);
 	}
 
 	@Test
@@ -204,10 +206,10 @@ public class DaytimePeakPeriodTest {
 		throws Exception {
 		DaytimePeakPeriod fixture = new DaytimePeakPeriod();
 		DateTime time = new DateTime();
-
+		time = time.toDateMidnight().toDateTime();
 		boolean result = fixture.offPeak(time);
 
-		assertEquals(false, result);
+		assertEquals(true, result);
 	}
 
 	@Test
@@ -215,10 +217,11 @@ public class DaytimePeakPeriodTest {
 		throws Exception {
 		DaytimePeakPeriod fixture = new DaytimePeakPeriod();
 		DateTime time = new DateTime();
+		time = time.toDateMidnight().toDateTime();
 
 		boolean result = fixture.offPeak(time);
 
-		assertEquals(false, result);
+		assertEquals(true, result);
 	}
 
 	public static void main(String[] args) {
