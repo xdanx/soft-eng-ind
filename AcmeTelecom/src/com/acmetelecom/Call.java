@@ -24,6 +24,10 @@ public class Call {
         return start.getCallee();
     }
 
+    public String getDurationMinutes() {
+        return "" + getDurationSeconds() / 60 + ":" + String.format("%02d", getDurationSeconds() % 60);
+    }
+    
     public int getDurationSeconds() {
         return (int) (((end.time() - start.time()) / 1000));
     }
