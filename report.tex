@@ -31,6 +31,9 @@
 \usepackage{verbatim} % adds environment for commenting out blocks of text & for better verbatim
 \usepackage{subfig} % make it possible to include more than one captioned figure/table in a single float
 \usepackage{authblk}
+\usepackage{pdfpages}
+\usepackage{wrapfig}
+\usepackage{hyperref}
 % These packages are all incorporated in the memoir class to one degree or another...
 
 %%% HEADERS & FOOTERS
@@ -64,16 +67,13 @@
 \maketitle
 
 \begin{abstract}
-Write this at the very end. It must respond to questions like:
+This report describes a possible solution for the problem of improving user bill calculation in a telecommunication company. 
+We present a new way of organising the source code in a modular design fashion, in order to improve the process of calculating user bills. Our solution makes use of the best software engineering practices, includes unit and acceptance tests.
 
-What? This report 
+Additionally, we have extended the initial solution by providing source code runnable on $Amazon$ $Web$ $Services$ $Elastic$ $Map$ $Reduce$ in order to deal with large sets of customers.
+\newline
 
-How?
-
-When?
-
-
-Keywords:
+{\bf Keywords}: acceptance testing, unit testing, design patterns, code refactoring.
 \end{abstract}
 
 
@@ -85,10 +85,10 @@ the off-peak periodand finish in the peak time, the whole call is billed as bein
 peak time period is charged as a peak call.
 
 
-Our job was to refactorize the code, making sure that the billing system is fair. In order to make sure that our changes works,
+Our main task was to refactorize the code, making sure that the billing system is fair. In order to make sure that our changes works,
 we added acceptance and unit tests covering the existing code.
 
-Our report is organised in the following way: {\bf Section 2} presents our implementation of the main feature of the program, which
+This report is organised in the following way: {\bf Section 2} presents our implementation of the main feature of the program, which
 allows to fairly compute the billings. {\bf Section 3} presents the way that the code was refactorized. 
 {\bf Section 4} includes the addition features that were added. 
 The fifth section gives an overview of the testing methodologies that were used durin the project, together with the testing tools.
@@ -126,10 +126,11 @@ even periods, we apply the tactic discussed above.
 In the end, the final cost is the total cost for the 12 hours periods + (the cost between START and T1 (C1)) + (the cost between T2 and END (C2). 
 Again, for C1 and C2 we can easily identify what tariff we need to use (peak or off-peak one).
 
+\subsection{Joda}
 Also, JodaTime helped us a lot in order to manage all the complexity for handling periods of time,
 translating the a date into milliseconds and subtracting 2 different Dates. 
 
-
+\subsection{Printer}
 In terms of generating the status of the bills for the customers, the system was directing its results to the Standard Output pipe. 
 Unfortunately, the only output interface (HtmlPrinter) was generating HTML tables which were not following the W3C standards. 
 Because we have decided to make our system as reliable as possible, we had to take into consideration different set-ups where our system would be running. 
@@ -163,8 +164,12 @@ we have proceed was to
  \item{com.actelecom.utils}
 \end{enumerate}
 
-Similarly, we have decided to organise the tests in the same manner.
-
+Similarly, we have decided to organise the tests in the same manner. The unit package contains tests for:
+\begin{enumerate}
+ \item{com.actelecom.tests.units.calls}
+ \item{com.actelecom.tests.units.print}
+ \item{com.actelecom.tests.units.utils}
+\end{enumerate}
 
 
 
@@ -200,18 +205,17 @@ The $LineItem$ was used to store customer's phone calls in a data structure.
 In order to remove the cyclic dependecy, we jave created a new external class $LineItem$ placed in the 
 utilities package.
 
-
 \section{Extra Work}
 \subsection{EMR}
-Aws
+\begin{figure}[ht]
+\includegraphics[scale=0.25]{hadoop.png}
+\caption{Hadoop \cite{hadoop}}
+\end{figure}
 
 \subsection{Source code validation}
 Another important aspect of software engineering is source code validation. Besides the
 aforementioned high level dependency analysis, it is probably worth using tools like Lint4J
-and CodePro AnalytiX to audit code, produce metrics, such as Afferent/Efferent Coup-
-lings, to measure code quality, and find similar/dead code to identify and remove redund-
-ancy, hence streamlining the codebase, in preparation for deployment to target environ-
-ment.
+and CodePro AnalytiX to audit code, produce metrics, such as Afferent/Efferent Couplings, to measure code quality, and find similar/dead code to identify and remove redundancy, hence streamlining the codebase, in preparation for deployment to target environment.
 
 \subsection{Documentation}
 On top of the builtin javadoc tool, the JAutodoc tool was used to generate Java documentation of typical classes like the model CustomerBill for completeness.
@@ -225,35 +229,42 @@ FairPeakCalculator, then added together for the final result, according to the e
 total peak seconds in a day * peak rate + total offpeak seconds in a day * offpeak rate
 
 \section{Testing}
-Testing was further augmented by importing techniques used in web applications for ex-
-ample, like the Selenium web browser automated testing tool, and JSoup to construct
+Testing was further augmented by importing techniques used in web applications for example, like the Selenium web browser automated testing tool, and JSoup to construct
 HTML parse trees, and navigate through them using combinations of familiar jQuery-like
 selectors, for better code coverage, and hence greater confidence in the final end product.
 
 \subsection{Unit Testing}
-Unit testing
+A unit test is an automated piece of code that invokes a unit of work in the system and then checks a single assumption about
+the behavior of that unit of work.\cite{JUnit} 
 
 \subsection{Acceptance Testing}
-acceptance testing
+Acceptance testing is a test conducted to determine if the requirements of a specification or contract are met. 
+It may involve chemical tests, physical tests, or performance tests.
 
 \section{Software Engineering Practices}
-During the implementation stage, good Software  Development practices were maintained by the members of the goup.
-We have extensively used some of the design patterns and development methodologies that we have learned during the $Software$ 
-$Engineering$ courses at $Imperial$.
+During the implementation stage, good Software Development practices were maintained by the members of the group. We have extensively used some of the design patterns and development methodologies that we have learned during the implementation phase.
 
 \subsection{Project Management}
-Managing the project was a crucial aspect during the project. The group had regular $Scrum$ meetings in order to discuss  
-the progress of the project. 
+Managing the project was a crucial aspect during the project. The group had regular Scrum meetings in order to discuss the 
+progress of the project, where the team-members had brainstorming sessions, draw sketches of different scenarios, looked at
+what could actually be done with the existing source code and what improvements will be necessary. All decisions were taken
+with the majority of the group members.
 
-\subsection{Design of the solution}
-Some patterns.
+\subsection{Design Patterns Used}
+During the code refactoring stage, we have made extensive use of some design pattern.
+\begin{itemize}
+\item{{\bf Factory pattern} defines an interface for creating a single object, but let subclasses decide which class to instantiate. Factory Method lets a class defer instantiation to subclasses (dependency injection).}
+\item{{\bf Iterator pattern} provides a way to access the elements of an aggregate object sequentially without exposing its underlying representation.}
+\item{{\bf Bridge pattern} decouples an abstraction from its implementation allowing the two to vary independently.}
+\item{{\bf Template pattern} defines the skeleton of an algorithm in an operation, passing some of the steps to subclasses.
+Template method lets subclasses redefine certain steps of an algorithm without changing the algorithm's structure.}
+\end{itemize}
 
 
 \subsection{Agile Development}
 We have used the $Test$ $Driven$ $Development$ when refactoring the codebase.
 A
 
-\subsection{}
 
 \section{Conclusion}
 In conclusion, our prohect have demonstrated in this project how to go about engineering software
@@ -297,6 +308,14 @@ of, and simplify deployment across different production environments.
   \emph{Design Principles and Design Patterns}.
   Robert C. Martin,
   2000
+
+\bibitem{artUnit}
+  \emph{The Art Of Unit Testing}.
+  http://artofunittesting.com/definition-of-a-unit-test/
+
+\bibitem{hadoop}
+  \emph{Hadoop}.
+  http://thetechmusings.files.wordpress.com/2011/\\02/hadoop-mapreduce-execution-framework.png
   
 \end{thebibliography}
 
