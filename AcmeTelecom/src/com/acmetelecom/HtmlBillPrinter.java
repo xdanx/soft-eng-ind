@@ -14,15 +14,15 @@ public class HtmlBillPrinter implements BillPrinter {
 	private VelocityEngine templateEngine;
 	public HtmlBillPrinter() {
 		templateEngine = new VelocityEngine();
-	}
+	}	
   public String printBill(Bill bill) {
-	  Template template = templateEngine.getTemplate("templates/HtmlBillTemplate.vm");
-	  StringWriter writer = new StringWriter();
-  	VelocityContext context = new VelocityContext();
-  	context.put("bill", bill);
-  	context.put("formatter", this);
-    template.merge(context, writer);  
-    return writer.toString();
+	Template template = templateEngine.getTemplate("templates/HtmlBillTemplate.vm");
+	StringWriter writer = new StringWriter();
+	VelocityContext context = new VelocityContext();
+	context.put("bill", bill);
+	context.put("formatter", this);
+	template.merge(context, writer);  
+	return writer.toString();
   }
   
   public String formatMoney(BigDecimal pence) {
