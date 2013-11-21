@@ -67,31 +67,32 @@
 \maketitle
 
 \begin{abstract}
-This report describes the implementation of a solution for the problem of improving user bill calculation in a telecommunication company. 
-We present a new way of organising the source code in a modular design fashion, in order to improve the process of calculating user bills. Our solution makes use of the best software engineering practices, includes unit and acceptance tests.
+In our report we describe the newly designed software for the telecommunication company ACME Telecom. The main task was to improve the way 
+user bills are calculated. Furthermore, we present a new way of organising the source code in a modular design fashion. 
+Our solution makes use of the best software engineering practices, includes unit and acceptance tests.
 
-Additionally, we have extended the initial solution by providing source code runnable on $Amazon$ $Web$ $Services$ $Elastic$ $Map$ $Reduce$ in order to deal with large sets of customers.
+Additionally, we have extended the initial solution by providing source code runnable on $Amazon'$ $Web$ $Services$ $Elastic$ $Map$ $Reduce$. As such, 
+ACME Telecom will be prepared for a future scalability issue when dealing with large sets of customers .
 \newline
 
-{\bf Keywords}: acceptance testing, unit testing, design patterns, code refactoring.
+{\bf Keywords}: acceptance testing, unit testing, design patterns, code refactoring, scalability.
 \end{abstract}
 
 
 \section{Introduction}
-AcmeTelecom is a telecomommunication company which is currently running calculating the pricing and billing calculations
+AcmeTelecom is a telecommunication company which is currently running calculating the pricing and billing calculations
 for all of Acme's mobile phone customers in the following way: if a customer begins a call during the peak time, and the call 
 continues in off-peak period, then the whole call is billed at the the peak rate. Similarly, if a customer the call starts in 
-the off-peak periodand finish in the peak time, the whole call is billed as being a peak time call. Any call that overlaps the 
+the off-peak period and finish in the peak time, the whole call is billed as being a peak time call. Any call that overlaps the 
 peak time period is charged as a peak call.
 
-
-Our main task was to refactorize the code, making sure that the billing system is fair. In order to make sure that our changes works,
+Our main task was to rewrite the code making sure that the billing system is fair for every customer. In order to make sure that our changes work,
 we added acceptance and unit tests covering the existing code.
 
-This report is organised in the following way: {\bf Section 2} presents our implementation of the main feature of the program, which
-allows to fairly compute the billings. {\bf Section 3} presents the way that the code was refactorized. 
+This report is organized in the following way: {\bf Section 2} presents our implementation of the main feature of the program, which
+allows to fairly compute the billings. {\bf Section 3} presents the way that the code was refactoring. 
 {\bf Section 4} includes the addition features that were added. 
-The fifth section gives an overview of the testing methodologies that were used durin the project, together with the testing tools.
+The fifth section gives an overview of the testing methodologies that were used during the project, together with the testing tools.
 {\bf Section 6} discusses some design decisions that we have taken.
 The last part of the report offers our concluding remarks and potential improvements for the code.
 
@@ -99,19 +100,19 @@ The last part of the report offers our concluding remarks and potential improvem
 
 \subsection{Improved Cost Calculator}
 
-The given implementation for calculating the call costs, was not taking correctly into consideration 
+The initial implementation for calculating the call costs was not taking correctly into consideration 
 the $starting$ and $end$ times for a call. As a results, calls which were taking place during both $off$-$peak$ and 
 $on$-$peak$ times were being charged for the entire duration with the $on$-$peak$ tariff. For example, for an $on$-$peak$
-period of $7:00$ - $18:59$, a call from $20:30$ until $21:30$ would be correctly charged for $60$ minutes $\ast$
-$off$-$peak$ tariff, but a call from  $18:30$ until $19:30$ would be charged incorrectly $60$ minutes $\ast$ \textbf{on-peak},
-instead of $30$ minutes $\ast$ \textbf{on-peak} $+$ 30 minutes $\ast$ \textbf{off-peak}.
+period of 7:00 $-$ 18:59, a call from 20:30 until 21:30 would be correctly charged for 60 minutes $\ast$
+$off$-$peak$ tariff, but a call from  18:30 until 19:30 would be charged incorrectly 60 minutes $\ast$ \textbf{on-peak},
+instead of 30 minutes $\ast$ \textbf{on-peak} $+$ 30 minutes $\ast$ \textbf{off-peak}.
 
 Our code implementation solves this problem, and the algorithm can be described as follows. All $notations$ represented by capital letters 
 are $DateTime$ (Joda library) instances:
 \begin{enumerate}
-\item{For the start call ($START$), find the next ($higher$) peak/offpeak time delimiter ( $7:00$ or $19:00$ ) and save it as $T_1$.}
+\item{For the start call ($START$), find the next (\textit{higher}) \textit{peak/off-peak} time delimiter ( 7:00 or 19:00 ) and save it as $T_1$.}
 
-\item{For the end call ($END$), find the previous ($lower$) peak/offpeak time delimiter ( $7:00$ or $19:00$ ) and save it as $T_2$.}
+\item{For the end call ($END$), find the previous (\textit{lower}) \textit{peak/off-peak} time delimiter ( $7:00$ or $19:00$ ) and save it as $T_2$.}
 
 \item{Compute the seconds between $START$ and $T1$ (reffered as $C_1$) and between $END$ and $T_2$ (reffered as $C_2$).}
 
