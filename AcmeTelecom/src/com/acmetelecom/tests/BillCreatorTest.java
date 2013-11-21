@@ -13,7 +13,9 @@ import com.acmetelecom.BillingJob;
 import com.acmetelecom.CallLog;
 import com.acmetelecom.HtmlBillPrinter;
 import com.acmetelecom.customer.CentralCustomerDatabase;
+import com.acmetelecom.customer.CentralTariffDatabase;
 import com.acmetelecom.customer.CustomerDatabase;
+import com.acmetelecom.customer.TariffLibrary;
 
 public class BillCreatorTest {
 	@Test
@@ -33,8 +35,9 @@ public class BillCreatorTest {
 		fixture.billingJob = new BillingJob();
 		CallLog log = new ArrayCallLog();
 		CustomerDatabase customers = CentralCustomerDatabase.getInstance();
+		TariffLibrary tariffLibrary = CentralTariffDatabase.getInstance();
 
-		List<String> result = fixture.createBills(log, customers);
+		List<String> result = fixture.createBills(log, customers, tariffLibrary);
 
 		assertNotNull(result);
 	}
@@ -46,8 +49,9 @@ public class BillCreatorTest {
 		fixture.billingJob = new BillingJob();
 		CallLog log = new ArrayCallLog();
 		CustomerDatabase customers = CentralCustomerDatabase.getInstance();
+		TariffLibrary tariffLibrary = CentralTariffDatabase.getInstance();
 
-		List<String> result = fixture.createBills(log, customers);
+		List<String> result = fixture.createBills(log, customers, tariffLibrary);
 
 		assertNotNull(result);
 	}
@@ -59,8 +63,9 @@ public class BillCreatorTest {
 		fixture.billingJob = new BillingJob();
 		CallLog log = new ArrayCallLog();
 		CustomerDatabase customers = CentralCustomerDatabase.getInstance();
-
-		List<String> result = fixture.createBills(log, customers);
+		TariffLibrary tariffLibrary = CentralTariffDatabase.getInstance();
+		
+		List<String> result = fixture.createBills(log, customers, tariffLibrary);
 
 		assertNotNull(result);
 	}

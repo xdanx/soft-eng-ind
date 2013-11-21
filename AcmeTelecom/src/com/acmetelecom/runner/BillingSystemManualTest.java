@@ -10,6 +10,7 @@ import com.acmetelecom.CallLog;
 import com.acmetelecom.ConsolePrinter;
 import com.acmetelecom.HtmlBillPrinter;
 import com.acmetelecom.customer.CentralCustomerDatabase;
+import com.acmetelecom.customer.CentralTariffDatabase;
 
 
 public class BillingSystemManualTest {

@@ -14,6 +14,7 @@ import com.acmetelecom.BillingJob;
 import com.acmetelecom.Call;
 import com.acmetelecom.CallEvent;
 import com.acmetelecom.customer.Customer;
+import com.acmetelecom.customer.Tariff;
 
 public class BillingJobTest {
 	@Test
@@ -58,8 +59,9 @@ public class BillingJobTest {
 		BillingJob fixture = new BillingJob();
 		Customer customer = new Customer("", "", "");
 		List<CallEvent> callEvents = new ArrayList<CallEvent>();
-
-		Bill result = fixture.createBill(customer, callEvents);
+		Tariff tariff = Tariff.Business;
+		
+		Bill result = fixture.createBill(customer, tariff, callEvents);
 
 		assertNotNull(result);
 	}
@@ -70,8 +72,9 @@ public class BillingJobTest {
 		BillingJob fixture = new BillingJob();
 		Customer customer = new Customer("", "", "");
 		List<CallEvent> callEvents = new ArrayList<CallEvent>();
-
-		Bill result = fixture.createBill(customer, callEvents);
+		Tariff tariff = Tariff.Business;
+		
+		Bill result = fixture.createBill(customer, tariff, callEvents);
 
 		assertNotNull(result);
 	}
@@ -82,8 +85,9 @@ public class BillingJobTest {
 		BillingJob fixture = new BillingJob();
 		Customer customer = new Customer("", "", "");
 		List<CallEvent> callEvents = new ArrayList<CallEvent>();
-
-		Bill result = fixture.createBill(customer, callEvents);
+		Tariff tariff = Tariff.Business;
+		
+		Bill result = fixture.createBill(customer, tariff, callEvents);
 
 		assertNotNull(result);
 	}
@@ -94,8 +98,9 @@ public class BillingJobTest {
 		BillingJob fixture = new BillingJob();
 		Customer customer = new Customer("", "", "");
 		List<CallEvent> callEvents = new ArrayList<CallEvent>();
-
-		Bill result = fixture.createBill(customer, callEvents);
+		Tariff tariff = Tariff.Business;
+		
+		Bill result = fixture.createBill(customer, tariff, callEvents);
 
 		assertNotNull(result);
 	}
@@ -106,8 +111,9 @@ public class BillingJobTest {
 		BillingJob fixture = new BillingJob();
 		Customer customer = new Customer("", "", "");
 		List<CallEvent> callEvents = new ArrayList<CallEvent>();
-
-		Bill result = fixture.createBill(customer, callEvents);
+		Tariff tariff = Tariff.Business;
+		
+		Bill result = fixture.createBill(customer, tariff, callEvents);
 
 		assertNotNull(result);
 	}
@@ -118,8 +124,9 @@ public class BillingJobTest {
 		BillingJob fixture = new BillingJob();
 		Customer customer = new Customer("", "", "");
 		List<CallEvent> callEvents = new ArrayList<CallEvent>();
-
-		Bill result = fixture.createBill(customer, callEvents);
+		Tariff tariff = Tariff.Business;
+		
+		Bill result = fixture.createBill(customer, tariff, callEvents);
 
 		assertNotNull(result);
 	}
@@ -130,8 +137,9 @@ public class BillingJobTest {
 		BillingJob fixture = new BillingJob();
 		Customer customer = new Customer("", "", "");
 		List<CallEvent> callEvents = new ArrayList<CallEvent>();
-
-		Bill result = fixture.createBill(customer, callEvents);
+		Tariff tariff = Tariff.Business;
+		
+		Bill result = fixture.createBill(customer, tariff, callEvents);
 
 		assertNotNull(result);
 	}

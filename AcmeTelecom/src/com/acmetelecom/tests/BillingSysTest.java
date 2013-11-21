@@ -1,19 +1,23 @@
 package com.acmetelecom.tests;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.junit.*;
 
 import static org.junit.Assert.*;
 
+import com.acmetelecom.APIPrinter;
 import com.acmetelecom.ArrayCallLog;
 import com.acmetelecom.BillCreator;
-import com.acmetelecom.BillingSys;
+import com.acmetelecom.BillingSystem;
 import com.acmetelecom.CallLog;
 import com.acmetelecom.HtmlBillPrinter;
 import com.acmetelecom.customer.CentralCustomerDatabase;
+import com.acmetelecom.customer.CentralTariffDatabase;
 import com.acmetelecom.customer.CustomerDatabase;
+import com.acmetelecom.customer.TariffLibrary;
 
 public class BillingSysTest {
 	
@@ -22,40 +26,42 @@ public class BillingSysTest {
 		throws Exception {
 		CallLog callLog = new ArrayCallLog();
 		CustomerDatabase customerDatabase = CentralCustomerDatabase.getInstance();
-		BillCreator billCreator = new BillCreator(new HtmlBillPrinter());
+		TariffLibrary tariffsLibrary = CentralTariffDatabase.getInstance();
+		BillCreator billCreator = new BillCreator(new APIPrinter());
 
-		BillingSys result = new BillingSys(callLog, customerDatabase, billCreator);
+		BillingSystem result = new BillingSystem(callLog, customerDatabase, tariffsLibrary, billCreator);
 
-		// add additional test code here
 		assertNotNull(result);
 	}
 
 	@Test
 	public void testCallCompleted_1()
 		throws Exception {
-		BillingSys fixture = new BillingSys(new ArrayCallLog(), CentralCustomerDatabase.getInstance(), new BillCreator(new HtmlBillPrinter()));
+		BillingSystem fixture = new BillingSystem(new ArrayCallLog(), CentralCustomerDatabase.getInstance(), CentralTariffDatabase.getInstance(), new BillCreator(new APIPrinter()));
 		String caller = "";
 		String callee = "";
-
-		fixture.callCompleted(caller, callee);
+		Date date = new Date();
+		
+		fixture.callCompleted(caller, callee, date);
 
 	}
 
 	@Test
 	public void testCallInitiated_1()
 		throws Exception {
-		BillingSys fixture = new BillingSys(new ArrayCallLog(), CentralCustomerDatabase.getInstance(), new BillCreator(new HtmlBillPrinter()));
+		BillingSystem fixture = new BillingSystem(new ArrayCallLog(), CentralCustomerDatabase.getInstance(), CentralTariffDatabase.getInstance(), new BillCreator(new APIPrinter()));
 		String caller = "";
 		String callee = "";
-
-		fixture.callInitiated(caller, callee);
+		Date date = new Date();
+		
+		fixture.callCompleted(caller, callee, date);
 
 	}
 
 	@Test
 	public void testCreateCustomerBills_1()
 		throws Exception {
-		BillingSys fixture = new BillingSys(new ArrayCallLog(), CentralCustomerDatabase.getInstance(), new BillCreator(new HtmlBillPrinter()));
+		BillingSystem fixture = new BillingSystem(new ArrayCallLog(), CentralCustomerDatabase.getInstance(), CentralTariffDatabase.getInstance(), new BillCreator(new APIPrinter()));
 
 		fixture.createCustomerBills();
 	}
@@ -63,7 +69,7 @@ public class BillingSysTest {
 	@Test
 	public void testGetBills_1()
 		throws Exception {
-		BillingSys fixture = new BillingSys(new ArrayCallLog(), CentralCustomerDatabase.getInstance(), new BillCreator(new HtmlBillPrinter()));
+		BillingSystem fixture = new BillingSystem(new ArrayCallLog(), CentralCustomerDatabase.getInstance(), CentralTariffDatabase.getInstance(), new BillCreator(new APIPrinter()));
 		CallLog callLog = new ArrayCallLog();
 
 		List<String> result = fixture.getBills(callLog);
@@ -74,7 +80,7 @@ public class BillingSysTest {
 	@Test
 	public void testWriteBills_1()
 		throws Exception {
-		BillingSys fixture = new BillingSys(new ArrayCallLog(), CentralCustomerDatabase.getInstance(), new BillCreator(new HtmlBillPrinter()));
+		BillingSystem fixture = new BillingSystem(new ArrayCallLog(), CentralCustomerDatabase.getInstance(), CentralTariffDatabase.getInstance(), new BillCreator(new APIPrinter()));
 		List<String> bills = new ArrayList<String>();
 
 		fixture.writeBills(bills);
@@ -84,7 +90,7 @@ public class BillingSysTest {
 	@Test
 	public void testWriteBills_2()
 		throws Exception {
-		BillingSys fixture = new BillingSys(new ArrayCallLog(), CentralCustomerDatabase.getInstance(), new BillCreator(new HtmlBillPrinter()));
+		BillingSystem fixture = new BillingSystem(new ArrayCallLog(), CentralCustomerDatabase.getInstance(), CentralTariffDatabase.getInstance(), new BillCreator(new APIPrinter()));
 		List<String> bills = new ArrayList<String>();
 
 		fixture.writeBills(bills);
