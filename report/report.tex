@@ -34,6 +34,23 @@
 \usepackage{pdfpages}
 \usepackage{wrapfig}
 \usepackage{hyperref}
+\usepackage{listings}
+\lstset{frame=tb,
+  language=BASH,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true
+  tabsize=1
+}
 % These packages are all incorporated in the memoir class to one degree or another...
 
 %%% HEADERS & FOOTERS
@@ -157,9 +174,6 @@ The first one we have added is the ConsolePrinter class that is used to print th
 This is what we have used to test our product, integrating the ConsolePrinter with the Tests we ran. Also, because mostly all new systems will be used 
 part of a bigger architecture, we have decided to implement an API interface, used by our system to export its data to other systems. 
 
-
-
-
 \section{Refactoring the code}
 
 \subsection{Package Organisation}
@@ -180,6 +194,10 @@ The functionality of the Billing system includes the following:
  \item{computing bills given the information in customer and tarrif databases}
  \item{output pretty-printed bills}
 \end{enumerate}
+\begin{figure}[!ht]
+\includegraphics[scale=0.30]{Screen Shot 2013-11-21 at 19.00.13.png}
+\caption{Overall Architecture}
+\end{figure}
 Given this, we maintained BillingSystem as the root class of the system and delegated the above functionality to other classes whose
 instances are injected into the BillingSystem instance.
 
@@ -228,10 +246,10 @@ scalability problems ACME Telecom might face in the future.
 
 \subsection{Speed improvement}
 
-In order to improve the run speed of our system, we have developed our algirhtm to run in \Theta(n)
+In order to improve the run speed of our system, we have developed our algirhtm to run in $\Theta(n)$
 , where n is the length of the calls for each customer. We assert the fact that for each call,
 the \textit{start} and \textit{end} times are chronologically ordered ( the \textit{end} call is \textbf{never}
-before the \textit{start} call). Based on our assumption, we can then calculate in \Theta(1), for each call,
+before the \textit{start} call). Based on our assumption, we can then calculate in $\Theta$(1), for each call,
 what is the total cost associated. 
 
 \subsection{Source code validation}
@@ -239,10 +257,6 @@ Another important aspect of software engineering is source code validation. Besi
 aforementioned high level dependency analysis, it is probably worth using tools like Lint4J
 and CodePro AnalytiX to audit code, produce metrics, such as Afferent/Efferent Couplings, to measure code quality, and find similar/dead code to identify and remove redundancy, hence streamlining the codebase, in preparation for deployment to target environment.
 
-
-\subsection{Documentation}
-On top of the builtin javadoc tool, the JAutodoc tool was used to generate Java documentation of typical classes like the model CustomerBill for completeness.
-Subsequently, additional configuration enabled styling of the resulting generated Javadocs
 
 \subsection{New Output Interface}
 As we have descibed before, we have added several Output Interfaces,....
@@ -260,10 +274,30 @@ Unit tests can be found in the package com.acmetelecom.tests.unit. Their primary
 
 In order to asses our test coverage we have used EMMA tool which produces a raport describing classes, methods, blocks and lines tested. A diagram of this can be seen below:
 
+\begin{lstlisting}[language=bash]
+java -cp emma.jar emmarun -jar softeng2.jar
+
+[EMMA v2.0.5312 report, generated Thu Nov 19 19:57:47 GMT 2013]
+-----------------------------------
+OVERALL COVERAGE SUMMARY:
+
+[class, %]   [method, %]    [block, %]   
+100% (5/5)   79% (11/14)   89% (305/344) 
+
+[line, %]    [name]
+85% (67/79)  all classes
+----------------------------------
+\end{lstlisting}
+
 Since our initial coverage was not good enough we have some automatic test generator after in order to cover some of the tests we omit: initialisation of classes, methods calling with null arguments, etc. 
 CodPro AnalytiX\cite{codePro}  is an automatic unit test generator tool that helped us to make sure we have a very good test coverage and also to spot any small issues with the code. 
 For example we identified and removed some unused references. Even though this might not seem very important for our application, this is a good practice because in a 
 big system it is important not to reference unused parts, since the system will carry information that is not needed and will increase in size. This happens a lot with DLLs in CSharp. 
+\begin{figure}[!ht]
+\centering
+\includegraphics[scale=0.40]{Screen Shot 2013-11-21 at 18.46.09.png}
+\caption{Unit Tests}
+\end{figure}
 
 \subsection{Acceptance Testing}
 Acceptance testing is a test conducted to determine if the requirements of a specification or contract are met. 
@@ -305,26 +339,7 @@ the extensive suite of testing tools for supporting through the various stages o
 Unit, Integration, System, and Regression) there is evidently more
 that can still be done to improve this software, given sufficient resources.
 
-For example, the code obsfucation and optimisation Java tool, ProGuard, can also be used
-during live deployment, to increase the code efficiency. If resources permit, we might have
-also explored other alternatives for mocking up Java objects, like jMock, EasyMock or
-Mockito frameworks, as well as other acceptance testing frameworks like JBehave.
-Or even further optimise our code by profiling using VisualVM, and substituting commonly
-used functions for those found in the Apache Commons project, or the Google Guava
-libraries, which are far more widely used or tested, thus more reliable. There could also be
-the possibility to attempt dependency injection using Google Guice, to improve testability
-of, and simplify deployment across different production environments.
-
-
 \begin{thebibliography}{9}
-
-\bibitem{lamport94}
-  Leslie Lamport,
-  \emph{\LaTeX: A Document Preparation System}.
-  Addison Wesley, Massachusetts,
-  2nd Edition,
-  1994.
-
 \bibitem{mockito}
   \emph{Mockito}.
   http://docs.mockito.google\\code.com/hg/org/mockito/Mockito.html  
