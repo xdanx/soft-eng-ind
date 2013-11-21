@@ -340,17 +340,15 @@ Communication was also a vital factor when working for this project. The strong 
 easier and enjoyable.
 
 \section{Conclusion}
-In conclusion, we have demonstrated in this project how to apply about engineering software practices
-with a long term vision, using proper procedures, with proven techniques and tools, which
-are still applicable as the software system scales and matures over time.
-From the traditional tools for any project, such as a the version control system (Git), bug
-or issue tracking system (Trac), and continuous integration service (TeamCity), to
-the extensive suite of testing tools for supporting through the various stages of testing (Acceptance, 
-Unit, Integration, System, and Regression) there is evidently more
-that can still be done to improve this software, given sufficient resources.
+In conclusion, we present a solution that makes use of the appropriate software engineering practices, in order to 
+make sure that the whole system behaves correctly.
+The main logic of our solution is encapsulated in the $BillingJob.java$ and it works for pricing phone calls longer than $24$ hours. 
+The code was properly refactored in order to make it easy to understand its functionality and it was tested properly.
+An automated testing tool ($AnalitiX$ $CodePro$) was used to generate the unit tests.
+The resulting coverage for the classes was $100\%$ and $79\%$ for methods.
+In extension to the traditional tasks, the team has agreed to implement an extension for the $AWS$ $Elastic$ $Map$ $Reduce$ that is runnable on $Hadoop$.
 
 \begin{thebibliography}{9}
-
 \bibitem{mockito}
   \emph{Mockito}.
   http://docs.mockito.google\\code.com/hg/org/mockito/Mockito.html  
@@ -363,10 +361,6 @@ that can still be done to improve this software, given sufficient resources.
   \emph{Design Principles and Design Patterns}.
   Robert C. Martin,
   2000
-
-\bibitem{artUnit}
-  \emph{The Art Of Unit Testing}.
-  http://artofunittesting.com/definition-of-a-unit-test/
 
 \bibitem{hadoop}
   \emph{Hadoop}.
