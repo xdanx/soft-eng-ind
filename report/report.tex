@@ -97,7 +97,7 @@ The last part of the report offers our concluding remarks and potential improvem
 
 \section{ACME Telecom v2}
 
-\subsection{The Improved Cost Calculator}
+\subsection{Improved Cost Calculator}
 
 The given implementation for calculating the call costs, was not taking correctly into consideration 
 the $starting$ and $end$ times for a call. As a results, calls which were taking place during both $off$-$peak$ and 
@@ -131,21 +131,21 @@ Again, for $C_1$ and $C_2$ we can easily identify what tariff we need to use ($p
 
 \subsection{Calls Longer than 24 Hours}
 
-Due to our improved formula for computing the correct and fair cost, we have removed the initial problem 
+Due to our improved formula for computing the correct and fair cost (presented below), we have removed the initial problem 
 of calls longer than 24 hours. Our formula takes into consideration any length of time between the calls and 
-with the help of our algorithm we can compute the exact cost in a 
-
+with the help of our algorithm we can compute the exact cost in a linear time.
 
 \subsection{Joda}
 Also, JodaTime helped us a lot in order to manage all the complexity for handling periods of time,
-translating the a date into milliseconds and subtracting 2 different Dates. 
+translating the a date into milliseconds and subtracting 2 different Dates. It was also extremely useful for manipulating 
+different types of DateTime.
 
 \subsection{Printer}
 In terms of generating the status of the bills for the customers, the system was directing its results to the Standard Output pipe. 
 Unfortunately, the only output interface (HtmlPrinter) was generating HTML tables which were not following the W3C standards. 
 Because we have decided to make our system as reliable as possible, we had to take into consideration different set-ups where our system would be running. 
 For example, it could run on a server without any output attached (headless server), or for debugging purposes, 
-the billing output should be easily read and p arsed from the terminal. 
+the billing output should be easily read and parsed from the terminal. 
 By using the abstract factory design pattern, we have restructured our Output Interface as an abstract Class, 
 having different classes extend it. These classes will be actual printing and formatting the results in a way suitable for the environment.
 The current classes we have implemented or changed in the system are: HTMLPrinter and ConsolePrinter. HTMLPrinter is the initial implementation 
@@ -216,12 +216,16 @@ utilities package.
 
 \section{Extra Work}
 \subsection{Elastic Map Reduce}
-\emph{Elastic MapReduce} is an Amazon-based programming model used for processing very large data sets, 
-having its behavior inspired from the functional programming functions $map$ and $reduce$. 
-The overall process can be described in the following ways: the input is firstly split in such that it becomes parallelization; 
-after this step is performed, each resulting chunk is split again and mapped in a specific category; 
-finally, a reduction step is used to eliminate the duplicates in every category and concatenates the results. 
-In time, when the application will be required to scale, and the number of customers for $AcmeTelecom$ will be very large, $EMR$ can be extremely 
+\emph{Elastic MapReduce} or $EMR$ is an Amazon-based programming model used for processing very large data sets, 
+having its behavior inspired from the functional programming functions $map$ and $reduce$. The overall process is well
+documented in the computing literature.
+
+We have provided an interface implementation for the ACME Telecom to use the power of $EMR$ when the system is needed to scale to 
+accommodate more users. The main implementation is provided in the file $<<MISSING>>$. Our implementation reads the list of calls and the 
+customer information and starts a MapReduce job using Amazon EC2 in order to compute lightning-fast the costs for conversations used 
+to generate the bills.
+
+When the application will be required to scale and the number of customers for $AcmeTelecom$ will be very large, $EMR$ can be extremely 
 helpful when computing the costs for conversations and generating the bills as fast as possible. The $EMR$ should be adequate for any 
 scalability problems ACME Telecom might face in the future.
 \begin{figure}[ht]
@@ -231,10 +235,10 @@ scalability problems ACME Telecom might face in the future.
 
 \subsection{Speed improvement}
 
-In order to improve the run speed of our system, we have developed our algirhtm to run in \Theta(n)
+In order to improve the run speed of our system, we have developed our algirhtm to run in $\Theta(n)$
 , where n is the length of the calls for each customer. We assert the fact that for each call,
 the \textit{start} and \textit{end} times are chronologically ordered ( the \textit{end} call is \textbf{never}
-before the \textit{start} call). Based on our assumption, we can then calculate in \Theta(1), for each call,
+before the \textit{start} call). Based on our assumption, we can then calculate in $\Theta(1)$, for each call,
 what is the total cost associated. 
 
 \subsection{Source code validation}
@@ -320,13 +324,6 @@ of, and simplify deployment across different production environments.
 
 
 \begin{thebibliography}{9}
-
-\bibitem{lamport94}
-  Leslie Lamport,
-  \emph{\LaTeX: A Document Preparation System}.
-  Addison Wesley, Massachusetts,
-  2nd Edition,
-  1994.
 
 \bibitem{mockito}
   \emph{Mockito}.
