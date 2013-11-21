@@ -163,55 +163,52 @@ part of a bigger architecture, we have decided to implement an API interface, us
 
 \subsection{Package Organisation}
 One of the very first tasks was to reorganise the existing source code in a new way.
-This was because the existing code was simplistic and not modular enough. The way that
-we have proceed was to 
+This was because the existing code was not modular enough. It had classes with too many responsabilities (ex: BillingSystem),
+it mixed different aspects of the program in the same methods (ex. bill computation logic and bill html representation) and other aspects.
+These things made testing hard (many classes were not unittestable at all), understanding the code difficult and ultimately,
+difficult to maintain and extend the codebase.
 
+The major assumption we made is that the interface of billing system remains mostly unchanged. The only modification we made is to add 
+a time parameter to the event logging methods, in order to make the system testable and not time dependant.
+
+\subsection{Code restructuring}
+We restructured the code in terms of layers of functionality and thinking in terms I/O and method purity.
+The functionality of the Billing system includes the following:
 \begin{enumerate}
- \item{com.actelecom.calls}
- \item{com.actelecom.print}
- \item{com.actelecom.utils}
+ \item{logging call events}
+ \item{computing bills given the information in customer and tarrif databases}
+ \item{output pretty-printed bills}
 \end{enumerate}
+Given this, we maintained BillingSystem as the root class of the system and delegated the above functionality to other classes whose
+instances are injected into the BillingSystem instance.
 
-Similarly, we have decided to organise the tests in the same manner. The unit package contains tests for:
-\begin{enumerate}
- \item{com.actelecom.tests.units.calls}
- \item{com.actelecom.tests.units.print}
- \item{com.actelecom.tests.units.utils}
-\end{enumerate}
+Thus, the logging of events and the log reading in represented through the CallLog interface. Currently, this is implemented using an array.
+The flexibility of the interface allows us to use another type of storage (filesystem, database, cloud storage). Note how the use of an iterator
+when reading through the logs works with large amounts of data since they are not loaded all in a list and returned. Furthermore, using an iterator allows
+for lazy loading as well (ex.: reading 100 log entries at a time from a database instead of all 1 million).
 
+Bill generation logic is encompassed in the BillingJob class. An important thing to note is how this class was written: its 2 methods, aggregateCalls
+and createBill are the equivalent of the map and reduce functions respectively of a map reduce job. They can actually be reused to write a map-reduce
+class, but they need to be wrapped by methods conforming to the Hadoop API. The reason behind this is to be able to handle large amounts of data
+if that is the case in the future. 
 
+The pretty-printing in html format is achieved through the BillPrinter interface (allowing for other types of printing modes to be plugged in).
+The current implementation, HTMLBillPrinter has been rewritten to make use of a templating library, Apache Velocity, The reason for this is to make
+the representation more easily changeable and to minimize the code. Given the use of a template, even a non-programmer (a designer) can make changes 
+without having knowledge of Java.
 
-\iffalse
-\subsection{Handling the cyclic dependencies}
-This was caused by an inner LineItem class within BillingSystem. This was required by
-BillGenerator, as it was populating a data structure containing all phone calls made by
-customers.
-To solve this, LineItem was extracted out into the com.acmetelecom.util subpackage,
-thus removing this cyclic dependency, and at the same time, evolving the overall system
-towards a more reasonable structure.
-\fi
-
-\subsection{Code refurbishment}
-The existing codebase was restructured to become increasingly modular. By applying con-
-cepts of dependency inversion and abstraction, we decoupled these classes into packages,
-each with a dedicated purpose.
-This brought about many benefits, such as encouraging code reuse and making testing
-convenient. Our team could now work simultaneously and asynchronously. Integration
-would be almost painless, due to a clear separation of concerns, introduced by interfaces.
-Ease of collaboration was also an added benefit.
-Full details of external dependencies as well as an architecture diagram, are available for reference.
-The project was managed using Maven, where external dependencies are specified as
-artifacts in pom.xml. The main application and test code are housed in distinct subfolders,
-yet test code is able to reference the Class Under Test (CUT). Test code is also composed
-as hierarchical TestSuites, to selectively test different segments of the codebase. Hardcoded
-constants belong in a properties file, in the respective resources folder.
+For the whole code, whe thought in terms of the priciple of purity, side-effects, I/O and testability although more as an inspiration since the
+Java type system does not offer support for the above in the way the Haskell language does. Thus, we identified parts of the code which are
+"pure" (ex. createBill) and made these methods stateless and dependant only on their parameters, since essentially they are just functions
+that take an input and provide an output. This made achieving corectness and testing a lot easier. Obviously, side-effects cannot be avoided in Java,
+but by separating database connections, reading the current time from actual processing of data we have many more guarantees about correctness.
 
 \subsection{Removing the cyclic dependencies}
 A cyclic dependecy was by the inner class $LineItem$, which was placed inside the $BillingSystem.java$.
-The $LineItem$ was used to store customer's phone calls in a data structure.
+The $LineItem$ was used to store customer's phone calls in a data structure.In order to remove the cyclic dependecy, we attached the
+data contained by LineItem to the Call object.
 
-In order to remove the cyclic dependecy, we jave created a new external class $LineItem$ placed in the 
-utilities package.
+The newly refactored code has no cyclic dependencies.
 
 \section{Extra Work}
 \subsection{Elastic Map Reduce}
