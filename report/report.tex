@@ -326,11 +326,9 @@ with the majority of the group members.
 \subsection{Design Patterns Used}
 During the code refactoring stage, we have made extensive use of some design pattern.
 \begin{itemize}
-\item{{\bf Factory pattern} defines an interface for creating a single object, but let subclasses decide which class to instantiate. Factory Method lets a class defer instantiation to subclasses (dependency injection).}
-\item{{\bf Iterator pattern} provides a way to access the elements of an aggregate object sequentially without exposing its underlying representation.}
-\item{{\bf Bridge pattern} decouples an abstraction from its implementation allowing the two to vary independently.}
-\item{{\bf Template pattern} defines the skeleton of an algorithm in an operation, passing some of the steps to subclasses.
-Template method lets subclasses redefine certain steps of an algorithm without changing the algorithm's structure.}
+\item{{\bf Iterator pattern} provides a way to access the elements of an aggregate object sequentially. We have used this pattern ($BillCreator.java$).}
+\item{{\bf Prototype pattern}  create new objects objects create using a prototype. The $HTMLBillTemplate.vm$ is a template used to create $HTMLBillPrinter.java$}
+\item{{\bf Strategy pattern} defines a family of algorithms, encapsulate each one, and make them interchangeable. The classes $ConsolePrinter.java$ and $HTMLBillPrinter$ exemplify this pattern in our code.}
 \end{itemize}
 
 
