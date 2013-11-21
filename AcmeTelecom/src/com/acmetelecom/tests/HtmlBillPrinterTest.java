@@ -1,6 +1,7 @@
 package com.acmetelecom.tests;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,7 +34,7 @@ public class HtmlBillPrinterTest {
 
 		String result = fixture.formatDate(date);
 
-		assertEquals("11/21/13 4:31 PM", result);
+		assertEquals(SimpleDateFormat.getInstance().format(DateTime.now().getMillis()), result);
 	}
 
 	@Test

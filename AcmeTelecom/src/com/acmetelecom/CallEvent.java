@@ -6,7 +6,7 @@ public class CallEvent {
     private long time;
     private Stage stage;
     
-    enum Stage {
+    public static enum Stage {
     	START,
     	END
     }

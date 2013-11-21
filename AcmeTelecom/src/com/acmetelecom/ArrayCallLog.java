@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 public class ArrayCallLog implements CallLog {
 
-	List<CallEvent> callEvents;
+	public List<CallEvent> callEvents;
 	
 	public ArrayCallLog() {
 		callEvents = new ArrayList<CallEvent>();
