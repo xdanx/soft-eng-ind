@@ -18,18 +18,18 @@ public class BillingSystemManualTest {
 		CallLog log = new ArrayCallLog();
 		
 		DateTime dt		= new DateTime (2010, 11, 13, 18, 30, 00);
-		long startCall 	= dt.getMillis();
+		long time 	= dt.getMillis();
 		// Call ends after an hour
-		long endCall 	= dt.plusDays(0).plusHours(1).getMillis();
 		
-		log.logCallStart("447722113434", "447766511332", startCall);
-		log.logCallEnd("447722113434", "447766511332", endCall);
-
-		log.logCallStart("447722113434", "447711111111", startCall);
-		log.logCallEnd("447722113434", "447711111111", endCall);
-		
-		log.logCallStart("447777765432", "447711111111", startCall);
-		log.logCallEnd("447777765432", "447711111111", endCall);
+		log.logCallStart("447722113434", "447766511332", time);
+		time += 20000;
+		log.logCallEnd("447722113434", "447766511332", time);
+		log.logCallStart("447722113434", "447711111111", time);
+		time += 30000;
+		log.logCallEnd("447722113434", "447711111111", time);
+		log.logCallStart("447777765432", "447711111111", time);
+		time += 60000;
+		log.logCallEnd("447777765432", "447711111111", time);
 		
 		BillCreator billCreator = new BillCreator(new HtmlBillPrinter());
 		List<String> bills = billCreator.createBills(log, CentralCustomerDatabase.getInstance(),
