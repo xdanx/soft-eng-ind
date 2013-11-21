@@ -194,7 +194,7 @@ We restructured the code in terms of layers of functionality and thinking in ter
 The functionality of the Billing system includes the following:
 \begin{enumerate}
  \item{logging call events}
- \item{computing bills given the information in customer and tarrif databases}
+ \item{computing bills given the information in customer and tariff databases}
  \item{output pretty-printed bills}
 \end{enumerate}
 \begin{figure}[!ht]
@@ -204,33 +204,32 @@ The functionality of the Billing system includes the following:
 Given this, we maintained BillingSystem as the root class of the system and delegated the above functionality to other classes whose
 instances are injected into the BillingSystem instance.
 
-Thus, the logging of events and the log reading in represented through the CallLog interface. Currently, this is implemented using an array.
-The flexibility of the interface allows us to use another type of storage (filesystem, database, cloud storage). Note how the use of an iterator
-when reading through the logs works with large amounts of data since they are not loaded all in a list and returned. Furthermore, using an iterator allows
-for lazy loading as well (ex.: reading 100 log entries at a time from a database instead of all 1 million).
+Thus, the logging of events is represented through the CallLog interface. Currently, this is implemented using an Array.
+The flexibility of the interface allows us to use another type of storage (Filesystem, database, cloud storage). 
+We would like to point out that we have decided to use an iterator when reading through the logs. There is an increased 
+performance when dealing with large amounts of data, because of the lazy loading of data.
 
-Bill generation logic is encompassed in the BillingJob class. An important thing to note is how this class was written: its 2 methods, aggregateCalls
+Bill generation logic is encompassed in the BillingJob class. An important thing to note is how this class was written: its two methods, aggregateCalls
 and createBill are the equivalent of the map and reduce functions respectively of a map reduce job. They can actually be reused to write a map-reduce
 class, but they need to be wrapped by methods conforming to the Hadoop API. The reason behind this is to be able to handle large amounts of data
-if that is the case in the future. 
+when scalability will be required.
 
-The pretty-printing in html format is achieved through the BillPrinter interface (allowing for other types of printing modes to be plugged in).
-The current implementation, HTMLBillPrinter has been rewritten to make use of a templating library, Apache Velocity, The reason for this is to make
-the representation more easily changeable and to minimize the code. Given the use of a template, even a non-programmer (a designer) can make changes 
-without having knowledge of Java.
+The W3C standard in the HTML format is respected through the BillPrinter interface (allowing for other types of printing modes to be plugged in).
+The current implementation, HTMLBillPrinter has been rewritten to make use of a templating library: Apache Velocity. The reason for this is to make
+the representation more easily changeable and to minimize the code. Given the use of a template, we correctly split the design from the dynamic code generation
+part in our application.
 
-For the whole code, whe thought in terms of the priciple of purity, side-effects, I/O and testability although more as an inspiration since the
-Java type system does not offer support for the above in the way the Haskell language does. Thus, we identified parts of the code which are
-"pure" (ex. createBill) and made these methods stateless and dependant only on their parameters, since essentially they are just functions
-that take an input and provide an output. This made achieving corectness and testing a lot easier. Obviously, side-effects cannot be avoided in Java,
-but by separating database connections, reading the current time from actual processing of data we have many more guarantees about correctness.
+For the whole code, we followed the terms of the principle of purity, side-effects, I/O and testability although more as an inspiration since the
+Java type system does not offer support for the above in the way other programming languages do (For ex: Haskell). Thus, we identified parts of the code which are
+"pure" (ex. createBill) and made these methods stateless and dependent only on their parameters, since essentially they are just functions
+that take an input and provide an output. This resulted in writing testes in a more modular fashion. 
 
 \subsection{Removing the cyclic dependencies}
-A cyclic dependecy was by the inner class $LineItem$, which was placed inside the $BillingSystem.java$.
-The $LineItem$ was used to store customer's phone calls in a data structure.In order to remove the cyclic dependecy, we attached the
+A cyclic dependency was by the inner class $LineItem$, which was placed inside the $BillingSystem.java$.
+The $LineItem$ was used to store the customer's phone calls in a special data structure. In order to remove the cyclic dependency, we attached the
 data contained by LineItem to the Call object.
 
-The newly refactored code has no cyclic dependencies.
+In conclusion, the newly refactored code has no cyclic dependencies.
 
 \section{Extra Work}
 \subsection{Elastic Map Reduce}
