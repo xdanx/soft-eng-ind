@@ -30,8 +30,9 @@ public class BillingSystemManualTest {
 		log.logCallStart("447777765432", "447711111111", startCall);
 		log.logCallEnd("447777765432", "447711111111", endCall);
 		
-		BillCreator billCreator = new BillCreator(new ConsolePrinter());
-		List<String> bills = billCreator.createBills(log, CentralCustomerDatabase.getInstance());
+		BillCreator billCreator = new BillCreator(new HtmlBillPrinter());
+		List<String> bills = billCreator.createBills(log, CentralCustomerDatabase.getInstance(),
+		CentralTariffDatabase.getInstance());
 		for (String bill : bills) {
 			System.out.println(bill);
 		}

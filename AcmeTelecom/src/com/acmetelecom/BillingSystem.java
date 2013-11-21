@@ -1,29 +1,36 @@
 package com.acmetelecom;
 
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+
+import org.joda.time.DateTime;
 
 import com.acmetelecom.customer.CentralCustomerDatabase;
 import com.acmetelecom.customer.Customer;
 import com.acmetelecom.customer.CustomerDatabase;
+import com.acmetelecom.customer.TariffLibrary;
 
 // rewritten BillingSystem; left both in for now
-public class BillingSys {
+public class BillingSystem {
 	CallLog callLog;
 	CustomerDatabase customerDatabase;
 	BillCreator billCreator;
-	public BillingSys(CallLog callLog, CustomerDatabase customerDatabase, BillCreator billCreator) {
+	TariffLibrary tariffsLibrary;
+	public BillingSystem(CallLog callLog, CustomerDatabase customerDatabase,
+			TariffLibrary tariffsLibrary, BillCreator billCreator) {
 		this.callLog = callLog;
 		this.customerDatabase = customerDatabase;
 		this.billCreator = billCreator;
+		this.tariffsLibrary = tariffsLibrary;
 	}
 
-  public void callInitiated(String caller, String callee) {
-  	callLog.logCallStart(caller, callee, System.currentTimeMillis());
+  public void callInitiated(String caller, String callee, Date date) {
+  	callLog.logCallStart(caller, callee, date.getTime());
   }
 
-  public void callCompleted(String caller, String callee) {
-  	callLog.logCallEnd(caller, callee, System.currentTimeMillis());
+  public void callCompleted(String caller, String callee, Date date) {
+  	callLog.logCallEnd(caller, callee, date.getTime());
 	}
 
 	public void createCustomerBills() {
@@ -31,7 +38,7 @@ public class BillingSys {
 	}
 	
 	public List<String> getBills(CallLog callLog) {
-		return billCreator.createBills(callLog, customerDatabase);
+		return billCreator.createBills(callLog, customerDatabase, tariffsLibrary);
 	}
 	
 	public void writeBills(List<String> bills) {
