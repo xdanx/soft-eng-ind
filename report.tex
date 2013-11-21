@@ -67,7 +67,7 @@
 \maketitle
 
 \begin{abstract}
-This report describes a possible solution for the problem of improving user bill calculation in a telecommunication company. 
+This report describes the implementation of a solution for the problem of improving user bill calculation in a telecommunication company. 
 We present a new way of organising the source code in a modular design fashion, in order to improve the process of calculating user bills. Our solution makes use of the best software engineering practices, includes unit and acceptance tests.
 
 Additionally, we have extended the initial solution by providing source code runnable on $Amazon$ $Web$ $Services$ $Elastic$ $Map$ $Reduce$ in order to deal with large sets of customers.
@@ -106,25 +106,33 @@ period of $7:00$ - $18:59$, a call from $20:30$ until $21:30$ would be correctly
 $off$-$peak$ tariff, but a call from  $18:30$ until $19:30$ would be charged incorrectly $60$ minutes $\ast$ \textbf{on-peak},
 instead of $30$ minutes $\ast$ \textbf{on-peak} $+$ 30 minutes $\ast$ \textbf{off-peak}.
 
-Our code implementation solves this problem, and the algorithm is as follows. All notations represented by big letters 
+Our code implementation solves this problem, and the algorithm can be described as follows. All $notations$ represented by capital letters 
 are $DateTime$ (Joda library) instances:
 \begin{enumerate}
-\item{For the start call ($START$), find the next peak time start or end time ( $7:00$ or $18:59$ ) and save it as $T_1$.}
+\item{For the start call ($START$), find the next ($higher$) peak/offpeak time delimiter ( $7:00$ or $19:00$ ) and save it as $T_1$.}
 
-\item{Next, find the last start or end on-peak time that is before the end call ($END$) and save it as $T_2$.}
+\item{For the end call ($END$), find the previous ($lower$) peak/offpeak time delimiter ( $7:00$ or $19:00$ ) and save it as $T_2$.}
+
+\item{Compute the seconds between $START$ and $T1$ (reffered as $C_1$) and between $END$ and $T_2$ (reffered as $C_2$).}
+
+
 \end{enumerate}
 
-The case when $START$ and $LAST$ times are in the same peak or off-peak period is the trivial one: we compute the 
-cost for the call as ($LAST$ - $START$) $\ast$ (on-peak OR off-peak) tariff. The tariff type can be easily found. 
+The case when $T_1 > T_2$ means that $START$ and $END$ times are in the same peak or off-peak period. Trivially, we compute the 
+cost for the call as ($END$ - $START$) $\ast$ ($on$-$peak$ OR $off$-$peak$) tariff. The tariff type can be easily found. 
 
-In the other case when START and LAST times are in different zones, we calculate how many 12 hours intervals are between T1 and T2.
-If that number is even, then we know that the phone call lasted $\leq$ 24 hours. So we know that 1/2 of that time the call should be 
-charged with the offpeak tariff, and the other 1/2 time should be charged with the on-peak time. 
-In case that number is odd, then we identify the one extra period and which tariff should be applied to it, and then for the rest of the 
-even periods, we apply the tactic discussed above. 
+In the other cases when, $T_1 \leq T_2$, $START$ and $END$ may be in different zones. Therefore, we calculate how many $12$ hours intervals are between $T_1$ and $T_2$.
+If that number is even,  we know that $1/2$ of that time the call should be 
+charged with the $off$-$peak$ tariff, and the other $1/2$ time should be charged with the $on$-$peak$ time. 
+In case that number is odd, then we identify the one extra period (depending if the call started in $on$-$peak$ or $off$-$peak$) and which tariff should be applied to it.
 
-In the end, the final cost is the total cost for the 12 hours periods + (the cost between START and T1 (C1)) + (the cost between T2 and END (C2). 
-Again, for C1 and C2 we can easily identify what tariff we need to use (peak or off-peak one).
+In the end, the final cost is the total cost for the $12$ hours periods $+$ (the cost between $START$ and $T_1$ ($C_1$)) $+$ (the cost between $T_2$ and $END$ ($C_2$). 
+Again, for $C_1$ and $C_2$ we can easily identify what tariff we need to use ($peak$ or $off$-$peak$ one).
+
+\subsection{Calls Longer Than 24 Hours}
+By applying the tactic discussed above, we are guanranteed to cover all cases. Also, out solution is better than computing cost per day
+and iteratively determining how many full $24$ hours are between phonecalls that lasted more than one day.
+
 
 \subsection{Joda}
 Also, JodaTime helped us a lot in order to manage all the complexity for handling periods of time,
@@ -223,13 +231,22 @@ On top of the builtin javadoc tool, the JAutodoc tool was used to generate Java 
 Subsequently, additional configuration enabled styling of the resulting generated Javadocs
 
 \section{Testing}
-Testing was further augmented by importing techniques used in web applications for example, like the Selenium web browser automated testing tool, and JSoup to construct
-HTML parse trees, and navigate through them using combinations of familiar jQuery-like
-selectors, for better code coverage, and hence greater confidence in the final end product.
+Any new software that is developed has the potential to act in a different way other that it was designed in the beginning. So testing is essential for any new piece of software.
+In our approach we followed a Test Driven Development (TDD) in order to make sure our system is developed as we intend it to work. 
+
+For this we came up with guides for implementation of the program logic and we made sure the original design contract was implemented successfully when all these tests passed.            
+Because of the number of tests, we decided to split tests into two packages: one for Unit Testing and one for Acceptance Testing.
+
 
 \subsection{Unit Testing}
-A unit test is an automated piece of code that invokes a unit of work in the system and then checks a single assumption about
-the behavior of that unit of work.\cite{JUnit} 
+Unit tests can be found in the package com.acmetelecom.tests.unit. Their primary purpose is to test components individually in isolation. Therefore Mockito\cite{mockito} framework has been used in order to help mock objects for the tests.
+
+In order to asses our test coverage we have used EMMA tool which produces a raport describing classes, methods, blocks and lines tested. A diagram of this can be seen below:
+
+Since our initial coverage was not good enough we have some automatic test generator after in order to cover some of the tests we omit: initialisation of classes, methods calling with null arguments, etc. 
+CodPro AnalytiX\cite{codePro}  is an automatic unit test generator tool that helped us to make sure we have a very good test coverage and also to spot any small issues with the code. 
+For example we identified and removed some unused references. Even though this might not seem very important for our application, this is a good practice because in a 
+big system it is important not to reference unused parts, since the system will carry information that is not needed and will increase in size. This happens a lot with DLLs in CSharp. 
 
 \subsection{Acceptance Testing}
 Acceptance testing is a test conducted to determine if the requirements of a specification or contract are met. 
@@ -311,6 +328,10 @@ of, and simplify deployment across different production environments.
 \bibitem{hadoop}
   \emph{Hadoop}.
   http://thetechmusings.files.wordpress.com/2011/\\02/hadoop-mapreduce-execution-framework.png
+  
+\bibitem{codePro}
+  \emph{CodePro AnalitiX}.
+  https://developers.google.com/java-dev-tools/codepro/doc/ 
   
 \end{thebibliography}
 
