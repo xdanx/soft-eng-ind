@@ -1,11 +1,12 @@
 package com.acmetelecom;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 
 import com.acmetelecom.customer.Customer;
 
-public class Bill {
+public class Bill implements Serializable {
 	Customer customer;
 	BigDecimal totalCost;
 	List<Call> calls;
