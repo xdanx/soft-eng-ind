@@ -194,7 +194,7 @@ We restructured the code in terms of layers of functionality and thinking in ter
 The functionality of the Billing system includes the following:
 \begin{enumerate}
  \item{logging call events}
- \item{computing bills given the information in customer and tarrif databases}
+ \item{computing bills given the information in customer and tariff databases}
  \item{output pretty-printed bills}
 \end{enumerate}
 \begin{figure}[!ht]
@@ -204,33 +204,32 @@ The functionality of the Billing system includes the following:
 Given this, we maintained BillingSystem as the root class of the system and delegated the above functionality to other classes whose
 instances are injected into the BillingSystem instance.
 
-Thus, the logging of events and the log reading in represented through the CallLog interface. Currently, this is implemented using an array.
-The flexibility of the interface allows us to use another type of storage (filesystem, database, cloud storage). Note how the use of an iterator
-when reading through the logs works with large amounts of data since they are not loaded all in a list and returned. Furthermore, using an iterator allows
-for lazy loading as well (ex.: reading 100 log entries at a time from a database instead of all 1 million).
+Thus, the logging of events is represented through the CallLog interface. Currently, this is implemented using an Array.
+The flexibility of the interface allows us to use another type of storage (Filesystem, database, cloud storage). 
+We would like to point out that we have decided to use an iterator when reading through the logs. There is an increased 
+performance when dealing with large amounts of data, because of the lazy loading of data.
 
-Bill generation logic is encompassed in the BillingJob class. An important thing to note is how this class was written: its 2 methods, aggregateCalls
+Bill generation logic is encompassed in the BillingJob class. An important thing to note is how this class was written: its two methods, aggregateCalls
 and createBill are the equivalent of the map and reduce functions respectively of a map reduce job. They can actually be reused to write a map-reduce
 class, but they need to be wrapped by methods conforming to the Hadoop API. The reason behind this is to be able to handle large amounts of data
-if that is the case in the future. 
+when scalability will be required.
 
-The pretty-printing in html format is achieved through the BillPrinter interface (allowing for other types of printing modes to be plugged in).
-The current implementation, HTMLBillPrinter has been rewritten to make use of a templating library, Apache Velocity, The reason for this is to make
-the representation more easily changeable and to minimize the code. Given the use of a template, even a non-programmer (a designer) can make changes 
-without having knowledge of Java.
+The W3C standard in the HTML format is respected through the BillPrinter interface (allowing for other types of printing modes to be plugged in).
+The current implementation, HTMLBillPrinter has been rewritten to make use of a templating library: Apache Velocity. The reason for this is to make
+the representation more easily changeable and to minimize the code. Given the use of a template, we correctly split the design from the dynamic code generation
+part in our application.
 
-For the whole code, whe thought in terms of the priciple of purity, side-effects, I/O and testability although more as an inspiration since the
-Java type system does not offer support for the above in the way the Haskell language does. Thus, we identified parts of the code which are
-"pure" (ex. createBill) and made these methods stateless and dependant only on their parameters, since essentially they are just functions
-that take an input and provide an output. This made achieving corectness and testing a lot easier. Obviously, side-effects cannot be avoided in Java,
-but by separating database connections, reading the current time from actual processing of data we have many more guarantees about correctness.
+For the whole code, we followed the terms of the principle of purity, side-effects, I/O and testability although more as an inspiration since the
+Java type system does not offer support for the above in the way other programming languages do (For ex: Haskell). Thus, we identified parts of the code which are
+"pure" (ex. createBill) and made these methods stateless and dependent only on their parameters, since essentially they are just functions
+that take an input and provide an output. This resulted in writing testes in a more modular fashion. 
 
 \subsection{Removing the cyclic dependencies}
-A cyclic dependecy was by the inner class $LineItem$, which was placed inside the $BillingSystem.java$.
-The $LineItem$ was used to store customer's phone calls in a data structure.In order to remove the cyclic dependecy, we attached the
+A cyclic dependency was by the inner class $LineItem$, which was placed inside the $BillingSystem.java$.
+The $LineItem$ was used to store the customer's phone calls in a special data structure. In order to remove the cyclic dependency, we attached the
 data contained by LineItem to the Call object.
 
-The newly refactored code has no cyclic dependencies.
+In conclusion, the newly refactored code has no cyclic dependencies.
 
 \section{Extra Work}
 \subsection{Elastic Map Reduce}
@@ -239,13 +238,15 @@ having its behavior inspired from the functional programming functions $map$ and
 documented in the computing literature.
 
 We have provided an interface implementation for the ACME Telecom to use the power of $EMR$ when the system is needed to scale to 
-accommodate more users. The main implementation is provided in the file $<<MISSING>>$. Our implementation reads the list of calls and the 
-customer information and starts a MapReduce job using Amazon EC2 in order to compute lightning-fast the costs for conversations used 
+accommodate more users. The main implementation is provided in the file $BillingMRJob.java$. Our implementation reads the list of calls and the 
+customer information and starts a MapReduce job using Amazon $EMR$ in order to compute lightning-fast the costs for conversations used 
 to generate the bills.
 
 When the application will be required to scale and the number of customers for $AcmeTelecom$ will be very large, $EMR$ can be extremely 
 helpful when computing the costs for conversations and generating the bills as fast as possible. The $EMR$ should be adequate for any 
-scalability problems ACME Telecom might face in the future.
+scalability problems ACME Telecom might face in the future. Of course, out code is modular so \textit{AcmeTelecom} can choose any 
+$EMR$ provider they like.
+
 \begin{figure}[ht]
 \includegraphics[scale=0.25]{hadoop.png}
 \caption{Hadoop \cite{hadoop}}
@@ -253,7 +254,7 @@ scalability problems ACME Telecom might face in the future.
 
 \subsection{Speed improvement}
 
-In order to improve the run speed of our system, we have developed our algirhtm to run in $\Theta$(n)
+In order to improve the run speed of our system, we have developed our algorithm to run in $\Theta$(n)
 , where n is the length of the calls for each customer. We assert the fact that for each call,
 the \textit{start} and \textit{end} times are chronologically ordered ( the \textit{end} call is \textbf{never}
 before the \textit{start} call). Based on our assumption, we can then calculate in $\Theta$(1), for each call,
@@ -261,29 +262,33 @@ what is the total cost associated.
 
 \subsection{Source code validation}
 Another important aspect of software engineering is source code validation. Besides the
-aforementioned high level dependency analysis, it is probably worth using tools like Lint4J
-and CodePro AnalytiX to audit code, produce metrics, such as Afferent/Efferent Couplings, to measure code quality, and find similar/dead code to identify and remove redundancy, hence streamlining the codebase, in preparation for deployment to target environment.
+aforementioned high level dependency analysis, we used tools like Lint4J
+and CodePro AnalytiX to audit code, produce metrics (for ex: Afferent/Efferent Couplings), measure code quality, 
+and find similar/dead code. The tools helped us streamline the codebase in preparation for deployment to a target environment.
 
 
 \subsection{New Output Interface}
-As discussed earlier, for 100\% legacy compatibility, we have decided to add new Classes extending the Output Interface. 
+As discussed earlier, for 100\% legacy compatibility, we have decided to add new Classes extending the newly Output Interface. 
 The first one we have added is the ConsolePrinter class that is used to print the BillingSystem output in a readable 
 format used for debugging. This is what we have used to test our product, integrating the ConsolePrinter with the Tests we ran. 
-Also, because our new system will be used part of a bigger architecture, we have decided to implement an API interface, 
-used to export our system's data. We chose the REST JSON format as it is the most practical and is the most adopted format.
+Also, because our new system might be used part of a bigger architecture, we have decided to implement an API interface, 
+used to export our system's data. We chose the REST JSON format as it is practical and is the most adopted format in the industry
 
 \section{Testing}
-Any new software that is developed has the potential to act in a different way other that it was designed in the beginning. So testing is essential for any new piece of software.
-In our approach we followed a Test Driven Development (TDD) in order to make sure our system is developed as we intend it to work. 
+Any new complex software has the potential to act in a different way than it was originally designed. As such, testing is \textit{essential} for any new piece of software 
+so our approach was of a Test Driven Development (TDD) in order to make sure our system is developed as we intend it to work from the beginning. 
 
-For this we came up with guides for implementation of the program logic and we made sure the original design contract was implemented successfully when all these tests passed.            
+For this we came up with guides for implementation of the program logic and we made sure that the original design contract 
+was implemented successfully when all the tests passed.            
 Because of the number of tests, we decided to split tests into two packages: one for Unit Testing and one for Acceptance Testing.
 
 
 \subsection{Unit Testing}
-Unit tests can be found in the package com.acmetelecom.tests.unit. Their primary purpose is to test components individually in isolation. Therefore Mockito\cite{mockito} framework has been used in order to help mock objects for the tests.
+Unit tests can be found in the package com.acmetelecom.tests.unit. Their primary purpose is to test components individually in isolation. 
+Therefore, the Mockito\cite{mockito} framework has been used in order to help mock objects for the tests.
 
-In order to asses our test coverage we have used EMMA tool which produces a raport describing classes, methods, blocks and lines tested. A diagram of this can be seen below:
+In order to asses our test coverage we have used the EMMA tool which produces a report describing classes, methods, blocks and lines tested. 
+The output from a run using EMMA can be seen below:
 
 \begin{lstlisting}[language=bash]
 java -cp emma.jar emmarun -jar softeng2.jar
@@ -300,10 +305,10 @@ OVERALL COVERAGE SUMMARY:
 ----------------------------------
 \end{lstlisting}
 
-Since our initial coverage was not good enough we have some automatic test generator after in order to cover some of the tests we omit: initialisation of classes, methods calling with null arguments, etc. 
-CodPro AnalytiX\cite{codePro}  is an automatic unit test generator tool that helped us to make sure we have a very good test coverage and also to spot any small issues with the code. 
-For example we identified and removed some unused references. Even though this might not seem very important for our application, this is a good practice because in a 
-big system it is important not to reference unused parts, since the system will carry information that is not needed and will increase in size. This happens a lot with DLLs in CSharp. 
+Since our initial code coverage was not good enough we use an automatic test generator for the rest of code: initialization of classes, methods calling with null arguments, etc. 
+CodPro AnalytiX\cite{codePro}  is an automatic unit test generator tool that helped us make sure we have a very good test coverage and also spot any small issues with the code. 
+For example, we identified and removed some unused references. Even though this might not seem very important for our application, it is a good practice because in a 
+complex system it is important not to reference unused parts, since the system will carry information that is not needed and will increase its size in memory. This happens a lot with DLLs in C\#. 
 \begin{figure}[!ht]
 \centering
 \includegraphics[scale=0.40]{cod_pro_analytix.png}
