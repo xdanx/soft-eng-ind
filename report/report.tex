@@ -127,65 +127,67 @@ instead of 30 minutes $\ast$ \textbf{on-peak} $+$ 30 minutes $\ast$ \textbf{off-
 Our code implementation solves this problem, and the algorithm can be described as follows. All $notations$ represented by capital letters 
 are $DateTime$ (Joda library) instances:
 \begin{enumerate}
-\item{For the start call ($START$), find the next (\textit{higher}) \textit{peak/off-peak} time delimiter ( 7:00 or 19:00 ) and save it as $T_1$.}
+\item{For the start call ($START$), find the next (\textit{higher}) \textit{peak/off-peak} time delimiter 
+( 7:00 or 19:00 ) and save it as $T_1$.}
 
-\item{For the end call ($END$), find the previous (\textit{lower}) \textit{peak/off-peak} time delimiter ( $7:00$ or $19:00$ ) and save it as $T_2$.}
+\item{For the end call ($END$), find the previous (\textit{lower}) \textit{peak/off-peak} time delimiter 
+( 7:00 or 19:00 ) and save it as $T_2$.}
 
-\item{Compute the seconds between $START$ and $T1$ (reffered as $C_1$) and between $END$ and $T_2$ (reffered as $C_2$).}
+\item{Compute the seconds between $START$ and $T1$ (referred as $C_1$) and between $END$ and $T_2$ (referred as $C_2$).}
 
 
 \end{enumerate}
 
-The case when $T_1 > T_2$ means that $START$ and $END$ times are in the same peak or off-peak period. Trivially, we compute the 
-cost for the call as ($END$ - $START$) $\ast$ ($on$-$peak$ OR $off$-$peak$) tariff. The tariff type can be easily found. 
+$\bullet$ The case when $T_1 > T_2$ means that $START$ and $END$ times are in the same \textit{peak or off-peak} period. 
+Trivially, we can then compute the cost for the call as ($END$ - $START$) $\ast$ (\textit{on-peak OR off-peak}) tariff. 
+The tariff type can be easily found. 
 
-In the other cases when, $T_1 \leq T_2$, $START$ and $END$ may be in different zones. Therefore, we calculate how many $12$ hours intervals are between $T_1$ and $T_2$.
-If that number is even,  we know that $1/2$ of that time the call should be 
-charged with the $off$-$peak$ tariff, and the other $1/2$ time should be charged with the $on$-$peak$ time. 
-In case that number is odd, then we identify the one extra period (depending if the call started in $on$-$peak$ or $off$-$peak$) and which tariff should be applied to it.
+$\bullet$ In all other cases, when $T_1 \leq T_2$, $START$ and $END$ may be in different zones. Therefore, we 
+calculate how many 12 hours intervals are between $T_1$ and $T_2$. If that number is even,  we know that $\frac{1}{2}$ of that 
+time the call should be charged with the \textit{off-peak} tariff, and the other $\frac{1}{2}$ time should be charged with the 
+\textit{on-peak} time. In case that number is odd, then we identify the one extra period (depending if the call started in 
+\textit{on-peak OR off-peak}) and which tariff should be applied to it.
 
-In the end, the final cost is the total cost for the $12$ hours periods $+$ (the cost between $START$ and $T_1$ ($C_1$)) $+$ (the cost between $T_2$ and $END$ ($C_2$). 
-Again, for $C_1$ and $C_2$ we can easily identify what tariff we need to use ($peak$ or $off$-$peak$ one).
+$\bullet$ The final cost for a customer is: [the total cost for the set of 12 hours periods] $+$ [the cost between $START$ 
+and $T_1$ ($C_1$)] $+$ [the cost between $T_2$ and $END$ ($C_2$)]. 
+Again, for $C_1$ and $C_2$ we can easily identify what tariff we need to use: the \textit{peak or off-peak} one.
 
 \subsection{Calls Longer than 24 Hours}
 
-Due to our improved formula for computing the correct and fair cost (presented below), we have removed the initial problem 
-of calls longer than 24 hours. Our formula takes into consideration any length of time between the calls and 
+Due to our improved formula for computing the correct and fair cost (presented above), we have removed the initial issue 
+of any call lasting longer than 24 hours. Our formula takes into consideration any length of time between the calls and 
 with the help of our algorithm we can compute the exact cost in a linear time.
 
 \subsection{Joda}
-Also, JodaTime helped us a lot in order to manage all the complexity for handling periods of time,
+JodaTime helped us a lot in order to manage all the complexity for handling periods of time,
 translating the a date into milliseconds and subtracting 2 different Dates. It was also extremely useful for manipulating 
-different types of DateTime.
+different types of DateTime instances and operations.
 
 \subsection{Printer}
 In terms of generating the status of the bills for the customers, the system was directing its results to the Standard Output pipe. 
-Unfortunately, the only output interface (HtmlPrinter) was generating HTML tables which were not following the W3C standards. 
-Because we have decided to make our system as reliable as possible, we had to take into consideration different set-ups where our system would be running. 
-For example, it could run on a server without any output attached (headless server), or for debugging purposes, 
+Unfortunately, the only present output interface (HtmlPrinter) was generating HTML tables which were not following the W3C standards. 
+Because we have decided to make our system as reliable as possible, we had to take into consideration different environments where 
+our system would be running: it could run on a server without any output attached (headless server), or for debugging purposes, 
 the billing output should be easily read and parsed from the terminal. 
-By using the abstract factory design pattern, we have restructured our Output Interface as an abstract Class, 
+By using the \textit{abstract factory design pattern}, we have restructured our Output Interface as an abstract Class, 
 having different classes extend it. These classes will be actual printing and formatting the results in a way suitable for the environment.
-The current classes we have implemented or changed in the system are: HTMLPrinter and ConsolePrinter. HTMLPrinter is the initial implementation 
-of printing the results in an HTML format. We have decided \textbf{not} to change it, because some other legacy software might be parsing the
-HTML file generated by our system. This is a major risk, because we can't control what other software interacts with the current one.
-
-Instead, for 100\% legacy compatibility, we have decided to add new Classes extending the Output Interface. 
-The first one we have added is the ConsolePrinter class that is used to print the BillingSystem output in a readable format used for debugging.
-This is what we have used to test our product, integrating the ConsolePrinter with the Tests we ran. Also, because mostly all new systems will be used 
-part of a bigger architecture, we have decided to implement an API interface, used by our system to export its data to other systems. 
+The current classes we have implemented or changed in the system are: HTMLPrinter and ConsolePrinter. HTMLPrinter is the initial 
+implementation printing the results in an HTML format. We have decided \textbf{not} to change it, because some other legacy software 
+might be parsing the HTML file generated by our system. This is a major risk, because we can't control how other software interacts 
+with ours. 
 
 \section{Refactoring the code}
 
 \subsection{Package Organisation}
-One of the very first tasks was to reorganise the existing source code in a new way.
-This was because the existing code was not modular enough. It had classes with too many responsabilities (ex: BillingSystem),
-it mixed different aspects of the program in the same methods (ex. bill computation logic and bill html representation) and other aspects.
-These things made testing hard (many classes were not unittestable at all), understanding the code difficult and ultimately,
-difficult to maintain and extend the codebase.
+One of the very first tasks was to reorganise the existing source code in a better way.
+This was because the existing code was not modular enough. Some examples are classes with too many responsibilities (ex: BillingSystem) 
+or different aspects of the program mixed in the same methods (ex. bill computation logic and bill HTML representation).
+These things made testing quite hard (many classes were not designed to be unit-tested at all), understanding the code with difficulty 
+and ultimately maintaining and extending the codebase was impractical.
 
-The major assumption we made is that the interface of billing system remains mostly unchanged. The only modification we made is to add 
-a time parameter to the event logging methods, in order to make the system testable and not time dependant.
+The major assumption we made is that the interface of billing system remains unchanged. The only modification we made to it is to add 
+a time parameter to the event logging methods, in order to make the calls (start/end) not dependent on the local system time. As such, 
+we can test all the functions properly.
 
 \subsection{Code restructuring}
 We restructured the code in terms of layers of functionality and thinking in terms I/O and method purity.
@@ -264,7 +266,11 @@ and CodePro AnalytiX to audit code, produce metrics, such as Afferent/Efferent C
 
 
 \subsection{New Output Interface}
-As we have descibed before, we have added several Output Interfaces,....
+As discussed earlier, for 100\% legacy compatibility, we have decided to add new Classes extending the Output Interface. 
+The first one we have added is the ConsolePrinter class that is used to print the BillingSystem output in a readable 
+format used for debugging. This is what we have used to test our product, integrating the ConsolePrinter with the Tests we ran. 
+Also, because our new system will be used part of a bigger architecture, we have decided to implement an API interface, 
+used to export our system's data. We chose the REST JSON format as it is the most practical and is the most adopted format.
 
 \section{Testing}
 Any new software that is developed has the potential to act in a different way other that it was designed in the beginning. So testing is essential for any new piece of software.
