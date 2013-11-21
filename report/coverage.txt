@@ -1,0 +1,22 @@
+java -cp emma.jar emmarun -jar softemma.jar 
+
+[EMMA v2.0.5312 report, generated Thu Nov 21 19:57:47 GMT 2013]
+-------------------------------------------------------------------------------
+OVERALL COVERAGE SUMMARY:
+
+[class, %]	[method, %]	[block, %]	[line, %]	[name]
+100% (5/5)	79%  (11/14)	89%  (305/344)	85%  (67/79)	all classes
+
+OVERALL STATS SUMMARY:
+
+total packages:	1
+total classes:	5
+total methods:	14
+total executable files:	4
+total executable lines:	79
+
+COVERAGE BREAKDOWN BY PACKAGE:
+
+[class, %]	[method, %]	[block, %]	[line, %]	[name]
+100% (5/5)	79%  (11/14)	89%  (305/344)	85%  (67/79)	org.eclipse.jdt.internal.jarinjarloader
+-------------------------------------------------------------------------------
