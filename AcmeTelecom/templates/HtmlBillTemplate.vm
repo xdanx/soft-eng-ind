@@ -1,0 +1,12 @@
+Acme Telecom
+</h1>
+<h2>${bill.customer.fullName}/${bill.customer.phoneNumber} - Price Plan: ${bill.customer.pricePlan}</h2>
+<table border="1">
+<tr><th width="160">Time</th><th width="160">Number</th><th width="160">Duration</th><th width="160">Cost</th></tr>
+#foreach( $call in ${bill.calls} )
+<tr><td>$formatter.formatDate(${call.startTime})</td><td>${call.callee}</td><td>${call.durationSeconds}</td><td>$formatter.formatMoney(${call.cost})</td></tr>
+#end
+</table>
+<h2>Total: $formatter.formatMoney(${bill.cost})</h2>
+</body>
+</html>
