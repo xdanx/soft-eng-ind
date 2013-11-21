@@ -280,14 +280,19 @@ Because of the number of tests, we decided to split tests into two packages: one
 
 
 \subsection{Unit Testing}
-Unit tests can be found in the package com.acmetelecom.tests.unit. Their primary purpose is to test components individually in isolation. Therefore Mockito\cite{mockito} framework has been used in order to help mock objects for the tests.
+Unit tests can be found in the package com.acmetelecom.tests. Their primary purpose is to test components, individually, in isolation. 
+Therefore Mockito\cite{mockito} framework has been used in order to help mock objects for the tests.
 
-In order to asses our test coverage we have used EMMA tool which produces a raport describing classes, methods, blocks and lines tested. A diagram of this can be seen below:
+Our initial test coverage was not good enough, therefore we have used some automatic test generator in order to cover some of the cases we omitted: initialisation of classes, methods calling with null arguments, etc. 
+$CodPro$ $AnalytiX$\cite{codePro} is an automatic unit test generator tool that helped us to make sure we have a very good test coverage and also to spot any small issues with the code. 
+For example we identified and removed some unused references. Even though this might not seem very important for our application, this is a good practice because in a 
+big system it is important not to reference unused parts, since the system will carry information that is not needed and will increase in size. This happens a lot with $DLLs$ in $C\#$. 
+In order to asses our test coverage we have used $EMMA$ tool which produces a raport describing classes, methods, blocks and lines tested. Running this tool gives us the following output:
 
 \begin{lstlisting}[language=bash]
 java -cp emma.jar emmarun -jar softeng2.jar
 
-[EMMA v2.0.5312 report, generated Thu Nov 19 19:57:47 GMT 2013]
+[EMMA v2.0.5312 report, generated Tue Nov 19 19:57:47 GMT 2013]
 -----------------------------------
 OVERALL COVERAGE SUMMARY:
 
@@ -299,10 +304,6 @@ OVERALL COVERAGE SUMMARY:
 ----------------------------------
 \end{lstlisting}
 
-Since our initial coverage was not good enough we have some automatic test generator after in order to cover some of the tests we omit: initialisation of classes, methods calling with null arguments, etc. 
-CodPro AnalytiX\cite{codePro}  is an automatic unit test generator tool that helped us to make sure we have a very good test coverage and also to spot any small issues with the code. 
-For example we identified and removed some unused references. Even though this might not seem very important for our application, this is a good practice because in a 
-big system it is important not to reference unused parts, since the system will carry information that is not needed and will increase in size. This happens a lot with DLLs in CSharp. 
 \begin{figure}[!ht]
 \centering
 \includegraphics[scale=0.40]{cod_pro_analytix.png}
