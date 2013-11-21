@@ -12,17 +12,18 @@ public class BillCreator {
 	public BillingJob billingJob;
 	public BillPrinter billPrinter;
 	
-	public BillCreator(BillingJob billJob) {
-		this.billingJob = billJob;
+	public BillCreator(BillPrinter billPrinter) {
+		this.billingJob = new BillingJob();
 		this.billPrinter = billPrinter;
 	}
 	
-	public List<String> createBills(CallLog log, CustomerRecords customers) {
+	public List<String> createBills(CallLog log, CustomerDatabase customers) {
 		Map<String, List<CallEvent>> callers = billingJob.aggregateCalls(log);
 		List<String> printedBills = new ArrayList<String>();
-		for (String caller : callers.keySet()) {
-			Customer customer = customers.getCustomer(caller);
-			Bill bill = billingJob.createBill(customer, callers.get(caller));
+		for (Customer customer : customers.getCustomers()) {
+			List<CallEvent> events = callers.get(customer.getPhoneNumber());
+			if (events == null) events = new ArrayList<CallEvent>(); // put an empty list; no calls
+			Bill bill = billingJob.createBill(customer, events);
 			printedBills.add(billPrinter.printBill(bill));
 		}
 		return printedBills;

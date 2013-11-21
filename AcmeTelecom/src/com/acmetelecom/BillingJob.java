@@ -135,7 +135,6 @@ public class BillingJob {
         BigDecimal callCost = cost;
         totalBill = totalBill.add(callCost);
         call.setCost(callCost);
-        //items.add(new LineItem(call, callCost));
     }
            
 		return new Bill(customer, calls, totalBill);

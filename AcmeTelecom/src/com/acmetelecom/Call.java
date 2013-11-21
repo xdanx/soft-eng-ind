@@ -14,7 +14,6 @@ import java.util.Date;
 public class Call {
     private CallEvent start;
     private CallEvent end;
-    // normally doesn't belong here but this makes code smaller
     private BigDecimal cost;
     public Call(CallEvent start, CallEvent end) {
         this.start = start;
@@ -41,8 +40,8 @@ public class Call {
     	return cost;
     }
     
-    
     public void setCost(BigDecimal cost) {
     	this.cost = cost;
     }
 }
+ 

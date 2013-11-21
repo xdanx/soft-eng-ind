@@ -13,7 +13,6 @@ public class DaytimePeakPeriod
         return (time.getHourOfDay() < 7 || time.getHourOfDay() >= 19);
     }
     
-    
     /*
      * Given an input date, the function returns the next delimiter, either peak
      * or off peak.

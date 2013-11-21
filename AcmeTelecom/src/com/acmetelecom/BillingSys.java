@@ -10,11 +10,11 @@ import com.acmetelecom.customer.CustomerDatabase;
 // rewritten BillingSystem; left both in for now
 public class BillingSys {
 	CallLog callLog;
-	CustomerRecords customerRecords;
+	CustomerDatabase customerDatabase;
 	BillCreator billCreator;
-	public BillingSys(CallLog callLog, CustomerRecords customerDatabase, BillCreator billCreator) {
+	public BillingSys(CallLog callLog, CustomerDatabase customerDatabase, BillCreator billCreator) {
 		this.callLog = callLog;
-		this.customerRecords = customerRecords;
+		this.customerDatabase = customerDatabase;
 		this.billCreator = billCreator;
 	}
 
@@ -31,7 +31,7 @@ public class BillingSys {
 	}
 	
 	public List<String> getBills(CallLog callLog) {
-		return billCreator.createBills(callLog, customerRecords);
+		return billCreator.createBills(callLog, customerDatabase);
 	}
 	
 	public void writeBills(List<String> bills) {
