@@ -284,16 +284,22 @@ Because of the number of tests, we decided to split tests into two packages: one
 
 
 \subsection{Unit Testing}
-Unit tests can be found in the package com.acmetelecom.tests.unit. Their primary purpose is to test components individually in isolation. 
+
+Unit tests can be found in the package com.acmetelecom.tests. Their primary purpose is to test components individually in isolation. 
 Therefore, the Mockito\cite{mockito} framework has been used in order to help mock objects for the tests.
 
 In order to asses our test coverage we have used the EMMA tool which produces a report describing classes, methods, blocks and lines tested. 
-The output from a run using EMMA can be seen below:
+Since our initial code coverage was not good enough we use an automatic test generator for the rest of code: initialization of classes, methods calling with null arguments, etc. 
+CodPro AnalytiX\cite{codePro}  is an automatic unit test generator tool that helped us make sure we have a very good test coverage and also spot any small issues with the code. 
+For example, we identified and removed some unused references. Even though this might not seem very important for our application, it is a good practice because in a 
+complex system it is important not to reference unused parts, since the system will carry information that is not needed and will increase its size in memory. This happens a lot with $DLLs$ in $C\#$. 
+
+The output from a run using the EMMA tool can be seen below:
 
 \begin{lstlisting}[language=bash]
 java -cp emma.jar emmarun -jar softeng2.jar
 
-[EMMA v2.0.5312 report, generated Thu Nov 19 19:57:47 GMT 2013]
+[EMMA v2.0.5312 report, generated Tue Nov 19 19:57:47 GMT 2013]
 -----------------------------------
 OVERALL COVERAGE SUMMARY:
 
@@ -305,10 +311,7 @@ OVERALL COVERAGE SUMMARY:
 ----------------------------------
 \end{lstlisting}
 
-Since our initial code coverage was not good enough we use an automatic test generator for the rest of code: initialization of classes, methods calling with null arguments, etc. 
-CodPro AnalytiX\cite{codePro}  is an automatic unit test generator tool that helped us make sure we have a very good test coverage and also spot any small issues with the code. 
-For example, we identified and removed some unused references. Even though this might not seem very important for our application, it is a good practice because in a 
-complex system it is important not to reference unused parts, since the system will carry information that is not needed and will increase its size in memory. This happens a lot with DLLs in C\#. 
+
 \begin{figure}[!ht]
 \centering
 \includegraphics[scale=0.40]{cod_pro_analytix.png}
@@ -318,24 +321,27 @@ complex system it is important not to reference unused parts, since the system w
 \subsection{Acceptance Testing}
 Acceptance testing is a test conducted to determine if the requirements of a specification or contract are met. 
 It may involve chemical tests, physical tests, or performance tests.
+In our case, the acceptance test is targetting the core class of this software which represents the system as whole, namely $BillingSystem$.
+The actual test cases can be written by a non-programmer person because we make use of the Cucumber library, backed up by mockito.
+Thus, one who would like to test our system would write scenarios in which they specify the call events followed by a description
+of the textual html output expected from the bills.
 
 \section{Software Engineering Practices}
-During the implementation stage, good Software Development practices were maintained by the members of the group. We have extensively used some of the design patterns and development methodologies that we have learned during the implementation phase.
+During the implementation stage, good Software Development practices were maintained by the members of the group. 
+We have extensively used some of the design patterns and development methodologies that we have learned during the implementation phase.
 
 \subsection{Project Management}
-Managing the project was a crucial aspect during the project. The group had regular Scrum meetings in order to discuss the 
-progress of the project, where the team-members had brainstorming sessions, draw sketches of different scenarios, looked at
+Managing the project was a crucial aspect throughout the entire period. The group had regular Scrum meetings in order to discuss the 
+progress of the project, where the team-members were brainstorming sessions, draw sketches of different scenarios, looked at
 what could actually be done with the existing source code and what improvements will be necessary. All decisions were taken
-with the majority of the group members.
+within the majority of the group members.
 
 \subsection{Design Patterns Used}
-During the code refactoring stage, we have made extensive use of some design pattern.
+During the code refactoring stage, we have made extensive use of design patterns.
 \begin{itemize}
-\item{{\bf Factory pattern} defines an interface for creating a single object, but let subclasses decide which class to instantiate. Factory Method lets a class defer instantiation to subclasses (dependency injection).}
-\item{{\bf Iterator pattern} provides a way to access the elements of an aggregate object sequentially without exposing its underlying representation.}
-\item{{\bf Bridge pattern} decouples an abstraction from its implementation allowing the two to vary independently.}
-\item{{\bf Template pattern} defines the skeleton of an algorithm in an operation, passing some of the steps to subclasses.
-Template method lets subclasses redefine certain steps of an algorithm without changing the algorithm's structure.}
+\item{{\bf Iterator pattern} provides a way to access the elements of an aggregate object sequentially. We have used this pattern ($BillCreator.java$).}
+\item{{\bf Prototype pattern}  create new objects objects create using a prototype. The $HTMLBillTemplate.vm$ is a template used to create $HTMLBillPrinter.java$}
+\item{{\bf Strategy pattern} defines a family of algorithms, encapsulate each one, and make them interchangeable. The classes $ConsolePrinter.java$ and $HTMLBillPrinter$ exemplify this pattern in our code.}
 \end{itemize}
 
 
@@ -346,17 +352,15 @@ Communication was also a vital factor when working for this project. The strong 
 easier and enjoyable.
 
 \section{Conclusion}
-In conclusion, we have demonstrated in this project how to apply about engineering software practices
-with a long term vision, using proper procedures, with proven techniques and tools, which
-are still applicable as the software system scales and matures over time.
-From the traditional tools for any project, such as a the version control system (Git), bug
-or issue tracking system (Trac), and continuous integration service (TeamCity), to
-the extensive suite of testing tools for supporting through the various stages of testing (Acceptance, 
-Unit, Integration, System, and Regression) there is evidently more
-that can still be done to improve this software, given sufficient resources.
+In conclusion, we present a solution that makes use of the appropriate software engineering practices, in order to 
+make sure that the whole system behaves correctly.
+The main logic of our solution is encapsulated in the $BillingJob.java$ and it works for pricing phone calls longer than $24$ hours. 
+The code was properly refactored in order to make it easy to understand its functionality and it was tested properly.
+An automated testing tool ($AnalitiX$ $CodePro$) was used to generate the unit tests.
+The resulting coverage for the classes was $100\%$ and $79\%$ for methods.
+In extension to the traditional tasks, the team has agreed to implement an extension for the $AWS$ $Elastic$ $Map$ $Reduce$ that is runnable on $Hadoop$.
 
 \begin{thebibliography}{9}
-
 \bibitem{mockito}
   \emph{Mockito}.
   http://docs.mockito.google\\code.com/hg/org/mockito/Mockito.html  
@@ -369,10 +373,6 @@ that can still be done to improve this software, given sufficient resources.
   \emph{Design Principles and Design Patterns}.
   Robert C. Martin,
   2000
-
-\bibitem{artUnit}
-  \emph{The Art Of Unit Testing}.
-  http://artofunittesting.com/definition-of-a-unit-test/
 
 \bibitem{hadoop}
   \emph{Hadoop}.
