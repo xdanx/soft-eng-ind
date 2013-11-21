@@ -31,6 +31,9 @@
 \usepackage{verbatim} % adds environment for commenting out blocks of text & for better verbatim
 \usepackage{subfig} % make it possible to include more than one captioned figure/table in a single float
 \usepackage{authblk}
+\usepackage{pdfpages}
+\usepackage{wrapfig}
+\usepackage{hyperref}
 % These packages are all incorporated in the memoir class to one degree or another...
 
 %%% HEADERS & FOOTERS
@@ -53,7 +56,7 @@
 
 %%% END Article customizations
 
-\title{Software Engineering For Industry \\ Coursework 2 - Report}
+\title{Software Engineering For Industry \\ AcmeTelecom - Report}
 \author[1]{Dan Demeter\thanks{dan.demeter10@imperial.ac.uk}}
 \author[1]{Dan Octavian\thanks{dan.octavian10@imperial.ac.uk}}
 \author[1]{Razvan Rosie\thanks{razvan.rosie10@imperial.ac.uk}}
@@ -64,16 +67,13 @@
 \maketitle
 
 \begin{abstract}
-Write this at the very end. It must respond to questions like:
+This report describes a possible solution for the problem of improving user bill calculation in a telecommunication company. 
+We present a new way of organising the source code in a modular design fashion, in order to improve the process of calculating user bills. Our solution makes use of the best software engineering practices, includes unit and acceptance tests.
 
-What? This report 
+Additionally, we have extended the initial solution by providing source code runnable on $Amazon$ $Web$ $Services$ $Elastic$ $Map$ $Reduce$ in order to deal with large sets of customers.
+\newline
 
-How?
-
-When?
-
-
-Keywords:
+{\bf Keywords}: acceptance testing, unit testing, design patterns, code refactoring.
 \end{abstract}
 
 
@@ -85,10 +85,10 @@ the off-peak periodand finish in the peak time, the whole call is billed as bein
 peak time period is charged as a peak call.
 
 
-Our job was to refactorize the code, making sure that the billing system is fair. In order to make sure that our changes works,
+Our main task was to refactorize the code, making sure that the billing system is fair. In order to make sure that our changes works,
 we added acceptance and unit tests covering the existing code.
 
-Our report is organised in the following way: {\bf Section 2} presents our implementation of the main feature of the program, which
+This report is organised in the following way: {\bf Section 2} presents our implementation of the main feature of the program, which
 allows to fairly compute the billings. {\bf Section 3} presents the way that the code was refactorized. 
 {\bf Section 4} includes the addition features that were added. 
 The fifth section gives an overview of the testing methodologies that were used durin the project, together with the testing tools.
@@ -99,19 +99,19 @@ The last part of the report offers our concluding remarks and potential improvem
 
 \subsection{The Improved Cost Calculator}
 
-The current implementation for calculating the call costs was not taking correctly into consideration 
-the starting and end times for a call. As a results, calls which were taking place during both off-peak and 
-on-peak times were being charged for the entire duration with the on-peak tariff. For example, for an on-peak
-period of 7:00 - 18:59, a call from 20:30 till 21:30 would be correctly charged for 60 minutes $\ast$
-off-peak tariff, but a call from  18:30 till 19:30 would be charged incorrectly 60 minutes $\ast$ \textbf{on-peak},
-instead of 30 minutes $\ast$ \textbf{on-peak} $+$ 30 minutes $\ast$ \textbf{off-peak}.
+The given implementation for calculating the call costs, was not taking correctly into consideration 
+the $starting$ and $end$ times for a call. As a results, calls which were taking place during both $off$-$peak$ and 
+$on$-$peak$ times were being charged for the entire duration with the $on$-$peak$ tariff. For example, for an $on$-$peak$
+period of $7:00$ - $18:59$, a call from $20:30$ until $21:30$ would be correctly charged for $60$ minutes $\ast$
+$off$-$peak$ tariff, but a call from  $18:30$ until $19:30$ would be charged incorrectly $60$ minutes $\ast$ \textbf{on-peak},
+instead of $30$ minutes $\ast$ \textbf{on-peak} $+$ 30 minutes $\ast$ \textbf{off-peak}.
 
 Our code implementation solves this problem, and the algorithm is as follows. All notations represented by big letters 
-are DateTime instances:
+are $DateTime$ (Joda library) instances:
 \begin{enumerate}
-\item{For the start call ($START$), find the next peak time start or end time ( $7:00$ or $18:59$ ) and save it as $T1$.}
+\item{For the start call ($START$), find the next peak time start or end time ( $7:00$ or $18:59$ ) and save it as $T_1$.}
 
-\item{Next, find the last start or end on-peak time that is before the end call ($END$) and save it as $T2$.}
+\item{Next, find the last start or end on-peak time that is before the end call ($END$) and save it as $T_2$.}
 \end{enumerate}
 
 The case when $START$ and $LAST$ times are in the same peak or off-peak period is the trivial one: we compute the 
@@ -127,10 +127,11 @@ even periods, we apply the tactic discussed above.
 In the end, the final cost is the total cost for the 12 hours periods + (the cost between START and T1 (C1)) + (the cost between T2 and END (C2). 
 Again, for C1 and C2 we can easily identify what tariff we need to use (peak or off-peak one).
 
+\subsection{Joda}
 Also, JodaTime helped us a lot in order to manage all the complexity for handling periods of time,
 translating the a date into milliseconds and subtracting 2 different Dates. 
 
-
+\subsection{Printer}
 In terms of generating the status of the bills for the customers, the system was directing its results to the Standard Output pipe. 
 Unfortunately, the only output interface (HtmlPrinter) was generating HTML tables which were not following the W3C standards. 
 Because we have decided to make our system as reliable as possible, we had to take into consideration different set-ups where our system would be running. 
@@ -163,8 +164,12 @@ we have proceed was to
  \item{com.actelecom.utils}
 \end{enumerate}
 
-Similarly, we have decided to organise the tests in the same manner.
-
+Similarly, we have decided to organise the tests in the same manner. The unit package contains tests for:
+\begin{enumerate}
+ \item{com.actelecom.tests.units.calls}
+ \item{com.actelecom.tests.units.print}
+ \item{com.actelecom.tests.units.utils}
+\end{enumerate}
 
 
 
@@ -200,10 +205,13 @@ The $LineItem$ was used to store customer's phone calls in a data structure.
 In order to remove the cyclic dependecy, we jave created a new external class $LineItem$ placed in the 
 utilities package.
 
-
 \section{Extra Work}
-\subsection{Elastic-Map-Reduce}
-Aws
+\subsection{Elastic Map Reduce}
+\emph{Elastic MapReduce} is an Amazon-based programming model used for processing very large data sets, having its behaviour inspired from the functional programming functions $map$ and $reduce$. The overall process can be described in the following ways: the input is firstly split in such that it becomes parallelizable; after this step is performed, each resulting chunk is splitted again and mapped in a specific category; finally, a reduction step is used to eliminate the duplicates in every category and concatenates the results. We think that if the number of customers for $AcmeTelecom$ will be very large, then $EMR$ can be helpful when computing the costs of conversation and generating the bills.
+\begin{figure}[ht]
+\includegraphics[scale=0.25]{hadoop.png}
+\caption{Hadoop \cite{hadoop}}
+\end{figure}
 
 
 \subsection{Calls Longer than 24 Hours}
@@ -224,58 +232,66 @@ what is the total cost associated.
 \subsection{Source code validation}
 Another important aspect of software engineering is source code validation. Besides the
 aforementioned high level dependency analysis, it is probably worth using tools like Lint4J
-and CodePro AnalytiX to audit code, produce metrics, such as Afferent/Efferent Coup-
-lings, to measure code quality, and find similar/dead code to identify and remove redund-
-ancy, hence streamlining the codebase, in preparation for deployment to target environ-
-ment.
+and CodePro AnalytiX to audit code, produce metrics, such as Afferent/Efferent Couplings, to measure code quality, and find similar/dead code to identify and remove redundancy, hence streamlining the codebase, in preparation for deployment to target environment.
 
 
 \subsection{Documentation}
 On top of the builtin javadoc tool, the JAutodoc tool was used to generate Java documentation of typical classes like the model CustomerBill for completeness.
 Subsequently, additional configuration enabled styling of the resulting generated Javadocs
 
+<<<<<<< HEAD
 \subsection{New Output Interface}
 As we have descibed before, we have added several Output Interfaces,....
 
+=======
+>>>>>>> eefbbe9366946eb638e60bfcc21e8ecee59a8c0d
 \section{Testing}
-Testing was further augmented by importing techniques used in web applications for ex-
-ample, like the Selenium web browser automated testing tool, and JSoup to construct
+Testing was further augmented by importing techniques used in web applications for example, like the Selenium web browser automated testing tool, and JSoup to construct
 HTML parse trees, and navigate through them using combinations of familiar jQuery-like
 selectors, for better code coverage, and hence greater confidence in the final end product.
 
 \subsection{Unit Testing}
-Unit testing
+A unit test is an automated piece of code that invokes a unit of work in the system and then checks a single assumption about
+the behavior of that unit of work.\cite{JUnit} 
 
 \subsection{Acceptance Testing}
-acceptance testing
+Acceptance testing is a test conducted to determine if the requirements of a specification or contract are met. 
+It may involve chemical tests, physical tests, or performance tests.
 
 \section{Software Engineering Practices}
-During the implementation stage, good Software  Development practices were maintained by the members of the goup.
-We have extensively used some of the design patterns and development methodologies that we have learned during the $Software$ 
-$Engineering$ courses at $Imperial$.
+During the implementation stage, good Software Development practices were maintained by the members of the group. We have extensively used some of the design patterns and development methodologies that we have learned during the implementation phase.
 
 \subsection{Project Management}
-Managing the project was a crucial aspect during the project. The group had regular $Scrum$ meetings in order to discuss  
-the progress of the project. 
+Managing the project was a crucial aspect during the project. The group had regular Scrum meetings in order to discuss the 
+progress of the project, where the team-members had brainstorming sessions, draw sketches of different scenarios, looked at
+what could actually be done with the existing source code and what improvements will be necessary. All decisions were taken
+with the majority of the group members.
 
-\subsection{Design of the solution}
-Some patterns.
+\subsection{Design Patterns Used}
+During the code refactoring stage, we have made extensive use of some design pattern.
+\begin{itemize}
+\item{{\bf Factory pattern} defines an interface for creating a single object, but let subclasses decide which class to instantiate. Factory Method lets a class defer instantiation to subclasses (dependency injection).}
+\item{{\bf Iterator pattern} provides a way to access the elements of an aggregate object sequentially without exposing its underlying representation.}
+\item{{\bf Bridge pattern} decouples an abstraction from its implementation allowing the two to vary independently.}
+\item{{\bf Template pattern} defines the skeleton of an algorithm in an operation, passing some of the steps to subclasses.
+Template method lets subclasses redefine certain steps of an algorithm without changing the algorithm's structure.}
+\end{itemize}
 
 
 \subsection{Agile Development}
-We have used the $Test$ $Driven$ $Development$ when refactoring the codebase.
-A
-
-\subsection{}
+The group has decided to use an \emph{iterative approach} in order to add value to our project from the beginning. 
+Refactoring allowed us to change the internal structure of our code without interfering with its external behaviour. While trying to reduce complexity, refactoring continuously improved the design of the source code, reducing the complexity of our task.
+Communication was also a vital factor when working for this project. The strong relationship among the developers made the task both 
+easier and enjoyable.
 
 \section{Conclusion}
-In conclusion, our prohect have demonstrated in this project how to go about engineering software
+In conclusion, we have demonstrated in this project how to apply about engineering software practices
 with a long term vision, using proper procedures, with proven techniques and tools, which
-are still applicable as the software system scales as it matures over time.
-From the traditional tools for any project, such as a version control system like Git, bug
-or issue tracking system like Trac, and continuous integration service like TeamCity, to
-the extensive suite of testing tools for supporting through the various stages of testing,
-namely, Acceptance, Unit, Integration, System, and Regression, there is evidently more
+are still applicable as the software system scales and matures over time.
+From the traditional tools for any project, such as a the version control system (Git), bug
+or issue tracking system (Trac), and continuous integration service (TeamCity), to
+the extensive suite of testing tools for supporting through the various stages of testing (Acceptance, 
+Unit, Integration, System, and Regression) there is evidently more
 that can still be done to improve this software, given sufficient resources.
 
 For example, the code obsfucation and optimisation Java tool, ProGuard, can also be used
@@ -310,6 +326,14 @@ of, and simplify deployment across different production environments.
   \emph{Design Principles and Design Patterns}.
   Robert C. Martin,
   2000
+
+\bibitem{artUnit}
+  \emph{The Art Of Unit Testing}.
+  http://artofunittesting.com/definition-of-a-unit-test/
+
+\bibitem{hadoop}
+  \emph{Hadoop}.
+  http://thetechmusings.files.wordpress.com/2011/\\02/hadoop-mapreduce-execution-framework.png
   
 \end{thebibliography}
 
