@@ -129,9 +129,11 @@ In case that number is odd, then we identify the one extra period (depending if 
 In the end, the final cost is the total cost for the $12$ hours periods $+$ (the cost between $START$ and $T_1$ ($C_1$)) $+$ (the cost between $T_2$ and $END$ ($C_2$). 
 Again, for $C_1$ and $C_2$ we can easily identify what tariff we need to use ($peak$ or $off$-$peak$ one).
 
-\subsection{Calls Longer Than 24 Hours}
-By applying the tactic discussed above, we are guanranteed to cover all cases. Also, out solution is better than computing cost per day
-and iteratively determining how many full $24$ hours are between phonecalls that lasted more than one day.
+\subsection{Calls Longer than 24 Hours}
+
+Due to our improved formula for computing the correct and fair cost, we have removed the initial problem 
+of calls longer than 24 hours. Our formula takes into consideration any length of time between the calls and 
+with the help of our algorithm we can compute the exact cost in a 
 
 
 \subsection{Joda}
@@ -214,19 +216,18 @@ utilities package.
 
 \section{Extra Work}
 \subsection{Elastic Map Reduce}
-\emph{Elastic MapReduce} is an Amazon-based programming model used for processing very large data sets, having its behaviour inspired from the functional programming functions $map$ and $reduce$. The overall process can be described in the following ways: the input is firstly split in such that it becomes parallelizable; after this step is performed, each resulting chunk is splitted again and mapped in a specific category; finally, a reduction step is used to eliminate the duplicates in every category and concatenates the results. We think that if the number of customers for $AcmeTelecom$ will be very large, then $EMR$ can be helpful when computing the costs of conversation and generating the bills.
+\emph{Elastic MapReduce} is an Amazon-based programming model used for processing very large data sets, 
+having its behavior inspired from the functional programming functions $map$ and $reduce$. 
+The overall process can be described in the following ways: the input is firstly split in such that it becomes parallelization; 
+after this step is performed, each resulting chunk is split again and mapped in a specific category; 
+finally, a reduction step is used to eliminate the duplicates in every category and concatenates the results. 
+In time, when the application will be required to scale, and the number of customers for $AcmeTelecom$ will be very large, $EMR$ can be extremely 
+helpful when computing the costs for conversations and generating the bills as fast as possible. The $EMR$ should be adequate for any 
+scalability problems ACME Telecom might face in the future.
 \begin{figure}[ht]
 \includegraphics[scale=0.25]{hadoop.png}
 \caption{Hadoop \cite{hadoop}}
 \end{figure}
-
-
-\subsection{Calls Longer than 24 Hours}
-Calculating calls longer than 24 hours become simpler once the FairPeakCalculator was
-completed, because these calls are but just multiples of calls lasting a full day with some
-leftover. The cost for this remaining part of the call can be calculated using the original
-FairPeakCalculator, then added together for the final result, according to the expression:
-total peak seconds in a day * peak rate + total offpeak seconds in a day * offpeak rate
 
 \subsection{Speed improvement}
 
